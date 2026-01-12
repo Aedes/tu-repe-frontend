@@ -1,0 +1,17 @@
+.subtitleItem {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    margin: 10px 0;
+    border-radius: 30px;
+    background-color: var(--celeste);
+    gap: .5rem;
+    width: max-content;
+}
+
+.subtitleItemDescription {
+    font-size: 1.2em;
+    color: var(--azul-claro);
+    font-weight: 500;
+}

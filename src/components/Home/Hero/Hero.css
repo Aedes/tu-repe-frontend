@@ -1,0 +1,73 @@
+.heroSection {
+    margin-top: 60px;
+    width: 100%;
+    min-height: 75vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    background-image: url("/images/hero/hero2.webp");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.heroSection h1 {
+    color: white;
+    font-size: 3.5rem;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.heroSection h1 span {
+    font-style: italic;
+}
+
+.heroDescription {
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    font-size: 1.5rem;
+    max-width: 800px;
+}
+
+.searchClubSection {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    background-color: var(--blanco);
+    border-radius: 0.5rem;
+    gap: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.searchClubSection h3 {
+    letter-spacing: 0;
+}
+
+.searchInputAndButtonContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.searchInputContainer {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    width: 600px;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e6e6e6;
+    background-color: white;
+}
+
+.searchInput {
+    border: none;
+    width: 100%;
+    font-size: .9rem;
+    outline: none;
+    background-color: transparent;
+}
