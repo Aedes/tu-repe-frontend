@@ -1,7 +1,11 @@
 import React, { useRef, useState } from "react";
 import "./MatchVideoPlayer.css"
 import Button from "../common/Button/Button";
-import { DownloadIcon, StartRecordingIcon, StopRecordingIcon } from "../../assets/Icons";
+import { DownloadIcon, StartRecordingIcon, StopRecordingIcon, CheckIcon } from "../../assets/Icons";
+import Modal from "../common/Modal/Modal";
+import { toast } from "sonner";
+import { BACKEND_API_URL } from "../../config";
+import { useFetchData } from "../../hooks/useFetchData";
 
 type Props = {
     videos: string[];
@@ -12,9 +16,19 @@ const MatchVideoPlayer: React.FC<Props> = ({ videos }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [speed, setSpeed] = useState(1);
     const [isRecording, setIsRecording] = useState(false)
+    const [isOpen, setIsOpen] = useState(false)
+    const [blob, setBlob] = useState<Blob | null>(null)
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const chunks = useRef<Blob[]>([]);
     const MAX_DURATION = 30_000;
+    const { isLoading: isProcessingClip, error, fetchData } = useFetchData<Blob>(`${BACKEND_API_URL}/clips/convert`, "POST")
+
+    if (error) {
+        console.error(error)
+        toast.error("Error al procesar el clip, inténtalo de nuevo más tarde", {
+            closeButton: true
+        })
+    }
 
     const getVideoStream = (video: any): MediaStream | null => {
         if (typeof video.captureStream === "function") {
@@ -43,8 +57,8 @@ const MatchVideoPlayer: React.FC<Props> = ({ videos }) => {
         return types.find(type => MediaRecorder.isTypeSupported(type));
     };
 
-
     const startRecording = async () => {
+        toast.success("Grabando clip...")
         setIsRecording(true)
         try {
             if (!videoRef.current) return;
@@ -56,7 +70,7 @@ const MatchVideoPlayer: React.FC<Props> = ({ videos }) => {
             const stream = getVideoStream(videoRef.current);
 
             if (!stream) {
-                alert("La grabación no es compatible con este navegador.");
+                toast.error("La grabación no es compatible con este navegador.");
                 return;
             }
 
@@ -65,7 +79,7 @@ const MatchVideoPlayer: React.FC<Props> = ({ videos }) => {
             const mimeType = getSupportedMimeType();
 
             if (!mimeType) {
-                alert("Tu navegador no soporta grabación de video 😕");
+                toast.error("Tu navegador no soporta grabación de video 😕");
                 return;
             }
 
@@ -79,14 +93,7 @@ const MatchVideoPlayer: React.FC<Props> = ({ videos }) => {
 
             mediaRecorder.onstop = () => {
                 const blob = new Blob(chunks.current, { type: "video/webm" });
-                const url = URL.createObjectURL(blob);
-
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = "clip_tu_repe.webm";
-                a.click();
-
-                URL.revokeObjectURL(url);
+                setBlob(blob)
             };
 
             mediaRecorder.start();
@@ -99,13 +106,18 @@ const MatchVideoPlayer: React.FC<Props> = ({ videos }) => {
         } catch (error) {
             console.error("Error starting recording:", error);
             setIsRecording(false)
-            alert("Ocurrió un error al iniciar la grabación.");
+            toast.error("Ocurrió un error al iniciar la grabación.");
         }
     };
 
     const stopRecording = () => {
         setIsRecording(false)
+        toast.info("Grabación detenida")
         mediaRecorderRef.current?.stop();
+        if (videoRef.current) {
+            videoRef.current.pause();
+        }
+        setIsOpen(true)
     };
 
     const handleEnded = () => {
@@ -132,6 +144,28 @@ const MatchVideoPlayer: React.FC<Props> = ({ videos }) => {
 
         URL.revokeObjectURL(a.href);
     };
+
+    const downloadClip = async (webmBlob: Blob) => {
+        const file = new File([webmBlob], "clip-tu-repe.webm", {
+            type: "video/webm"
+        });
+
+        const formData = new FormData();
+        formData.append("clip", file);
+
+        const mp4Blob = await fetchData(formData)
+
+        const url = URL.createObjectURL(mp4Blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "clip-tu-repe.mp4";
+        a.click();
+
+        URL.revokeObjectURL(url);
+        setIsOpen(false)
+        toast.success("Clip procesado")
+    }
 
     return (
         <>
@@ -213,6 +247,54 @@ const MatchVideoPlayer: React.FC<Props> = ({ videos }) => {
                     </Button>
                 </div>
             </div>
+            <Modal isOpen={isOpen}>
+                {
+                    isProcessingClip ?
+                        <div className="processingClip">
+                            <div className="spinnerLoading" />
+                            <span className="processingClipTitle">Procesando clip...</span>
+                            <p className="pWait">Esto puede tardar un momento.</p>
+                        </div>
+                        :
+                        <div className="controlsClips">
+                            <div className="tileAndIconContainer">
+                                <CheckIcon
+                                    width={32}
+                                    height={32}
+                                    fill="#28a745"
+                                />
+                                <h3 className="controlsClipsTitle">Clip grabado correctamente</h3>
+                            </div>
+                            <Button
+                                padding=".5rem"
+                                onClick={() => {
+                                    if (blob) {
+                                        downloadClip(blob)
+                                    }
+                                }}
+                                backgroundColor="#28a745"
+                                color="white"
+                                icon={
+                                    <DownloadIcon
+                                        width={20}
+                                        height={20}
+                                        fill="white"
+                                    />
+                                }
+                            >
+                                Descargar clip
+                            </Button>
+                            <Button
+                                padding=".5rem"
+                                onClick={() => setIsOpen(false)}
+                                backgroundColor="grey"
+                                color="white"
+                            >
+                                Cancelar
+                            </Button>
+                        </div>
+                }
+            </Modal>
         </>
     );
 }

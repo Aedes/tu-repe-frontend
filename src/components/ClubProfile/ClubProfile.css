@@ -65,7 +65,7 @@
     height: 150px;
     border-radius: 50%;
     object-fit: cover;
-    border: 5px solid var(--celeste);
+    border: 5px solid #a9d703;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -115,7 +115,7 @@
 }
 
 .filter:hover {
-    border-color: var(--azul-claro);
+    border-color: #1c67ba;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -155,7 +155,7 @@
     margin: 0 2rem 0 2rem;
     padding: 1rem;
     background-color: var(--blanco);
-    border-left: 3px solid var(--azul-claro);
+    border-left: 3px solid #1c67ba;
     border-radius: 5px;
 }
 
@@ -204,11 +204,29 @@
 }
 
 .downloadInfoContainer {
-    padding: 0 1rem 1rem 1rem;
+    padding: 0.5rem 1rem 1rem 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
     color: grey;
     font-weight: 500;
 
+}
+
+.clubProfileItems {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.clubProfileItem {
+    display: flex;
+    letter-spacing: -0.5px;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.pSlices {
+    color: grey;
 }

@@ -4,11 +4,12 @@ import { useFetchData } from "../../hooks/useFetchData";
 import type { IClub, ICourt } from "../../types";
 import { BACKEND_API_URL } from "../../config";
 import { useEffect, useState } from "react";
-import logoClub from "../../assets/tmp/westclub-logo.jpeg"
-import { PlayIcon, SearchIcon } from "../../assets/Icons";
+import logoClub from "../../assets/tmp/center-logo.jpeg"
+import { PlayIcon, SearchIcon, PinIcon, PhoneIcon, InstagramIcon } from "../../assets/Icons";
 import Button from "../common/Button/Button";
 import { CameraIcon } from "../../assets/Icons";
 import MatchVideoPlayer from "../MatchVideoPlayer/MatchVideoPlayer";
+import { toast } from "sonner";
 
 const ClubProfile = () => {
     const { clubId } = useParams();
@@ -21,7 +22,7 @@ const ClubProfile = () => {
     const [courtId, setCourtId] = useState<string>("")
     const [videos, setVideos] = useState<string[] | null>(null)
     const navigate = useNavigate()
-    const { isLoading: isLoadingVideos, fetchData: fetchDataVideos } = useFetchData<string[]>(`${BACKEND_API_URL}/videos/urls?startTime=${day}T${hour}:00Z&courtId=${courtId}`, "GET")
+    const { isLoading: isLoadingVideos, error: errorFetchVideos, fetchData: fetchDataVideos } = useFetchData<string[]>(`${BACKEND_API_URL}/videos/urls?startTime=${day}T${hour}:00Z&courtId=${courtId}`, "GET")
 
     useEffect(() => {
         const fetchClubAndCourts = async () => {
@@ -47,12 +48,24 @@ const ClubProfile = () => {
         }
     }
 
-    if (error || errorCourts) {
+    if (error) {
         console.error(error)
         return <div className="clubProfileContainerLoading">
-            <p className="pLoading">Lo sentimos, no se encontró el club.</p>
+            <p className="pLoading">No se encontró el club que estabas buscando.</p>
             <Button backgroundColor="#0077b6" color="white" onClick={() => navigate("/")}>Volver al inicio</Button>
         </div>
+    }
+
+    if (errorCourts) {
+        console.error(errorCourts)
+        toast.error("Error al cargar las canchas del club, vuelve a intentarlo más tarde.", {
+            duration: 10000
+        })
+    }
+
+    if (errorFetchVideos) {
+        console.error(errorFetchVideos)
+        toast.error("Error al obtener el partido, inténtalo de nuevo más tarde.")
     }
 
     if (isLoading || isLoadingCourts) {
@@ -72,9 +85,33 @@ const ClubProfile = () => {
                     </div>
                     <div className="clubProfileNameAndLocation">
                         <h1>{club?.name}</h1>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                        <p>Ingeniero Lange 1197, Mendoza, Argentina</p>
-                        <p>2625660880</p>
+                        <p>7 canchas de Pádel de alto rendimiento.</p>
+                        <div className="clubProfileItems">
+                            <div className="clubProfileItem">
+                                <PinIcon
+                                    width="16"
+                                    height="16"
+                                    fill="#a9d703"
+                                />
+                                <p>Coronel Suarez 936, San Rafael, Mendoza</p>
+                            </div>
+                            <div className="clubProfileItem">
+                                <PhoneIcon
+                                    width="16"
+                                    height="16"
+                                    fill="#a9d703"
+                                />
+                                <p>2604627402</p>
+                            </div>
+                            <div className="clubProfileItem">
+                                <InstagramIcon
+                                    width="16"
+                                    height="16"
+                                    fill="#a9d703"
+                                />
+                                <p>complejocenter</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div className="findYourMatchSection">
@@ -84,7 +121,7 @@ const ClubProfile = () => {
                                 <SearchIcon
                                     width="32"
                                     height="32"
-                                    fill="#023e8a"
+                                    fill="#1c67ba"
                                 />
                             </div>
                             <div className="findYourMatchTitleAndDescription">
@@ -164,7 +201,7 @@ const ClubProfile = () => {
                     </div>
                     <div className="buttonVideoContainer">
                         <Button
-                            backgroundColor="#023e8a"
+                            backgroundColor="#1c67ba"
                             color="white"
                             onClick={() => fetchVideos()}
                             disabled={!(courtId && day && hour) || isLoadingVideos}
@@ -198,10 +235,13 @@ const ClubProfile = () => {
                                             <PlayIcon
                                                 width="32"
                                                 height="32"
-                                                fill="#023e8a"
+                                                fill="#1c67ba"
                                             />
                                         </div>
-                                        <h3 className="titleMatchVideoPlayer">Tu partido: </h3>
+                                        <div>
+                                            <h3 className="titleMatchVideoPlayer">Tu partido: </h3>
+                                            <p className="pSlices">Dividido en {videos.length} partes. Al finalizar una se reproducirá la siguiente.</p>
+                                        </div>
                                     </div>
                                     <MatchVideoPlayer videos={videos} />
                                     <div className="downloadInfoContainer">

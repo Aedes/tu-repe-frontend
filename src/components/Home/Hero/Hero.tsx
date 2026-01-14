@@ -6,6 +6,7 @@ import type { IClub } from "../../../types";
 import { BACKEND_API_URL } from "../../../config";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const Hero = () => {
     const { error, fetchData } = useFetchData<IClub[]>(`${BACKEND_API_URL}/clubs`, "GET")
@@ -24,6 +25,7 @@ const Hero = () => {
 
     if (error) {
         console.error(error)
+        toast.error("Error al obtener los clubs, inténtalo de nuevo más tarde.")
     }
 
     return (

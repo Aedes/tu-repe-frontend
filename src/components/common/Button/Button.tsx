@@ -9,14 +9,15 @@ interface Props {
     disabled?: boolean;
     padding?: string;
     fontSize?: string;
+    width?: string;
 }
 
-const Button: React.FC<Props> = ({ children, onClick, icon, backgroundColor, color, disabled, padding, fontSize }) => {
+const Button: React.FC<Props> = ({ children, onClick, icon, backgroundColor, color, disabled, padding, fontSize, width }) => {
     return (
         <button
             onClick={onClick}
             className={`customButton ${disabled ? "disabledButton" : "activeButton"}`}
-            style={{ backgroundColor: backgroundColor, color: color, padding: padding, fontSize: fontSize }}
+            style={{ backgroundColor: backgroundColor, color: color, padding: padding, fontSize: fontSize, width: width }}
             disabled={disabled}
         >
             {icon && icon}
