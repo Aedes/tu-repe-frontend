@@ -1,14 +1,14 @@
 import "./Home.css"
-import NavBar from "../common/NavBar/NavBar";
 import Hero from "./Hero/Hero";
 import WhatIs from "./WhatIs/WhatIs";
+import NavBar from "../common/NavBar/NavBar";
 
 const Home = () => {
     return (
         <div className="homeContainer">
-            <NavBar/>
-            <Hero/>
-            <WhatIs/>
+            <NavBar />
+            <Hero />
+            <WhatIs />
         </div>
     );
 }

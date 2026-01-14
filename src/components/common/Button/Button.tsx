@@ -6,17 +6,21 @@ interface Props {
     icon?: React.ReactNode;
     backgroundColor?: string;
     color?: string;
+    disabled?: boolean;
+    padding?: string;
+    fontSize?: string;
 }
 
-const Button: React.FC<Props> = ({children, onClick, icon, backgroundColor, color}) => {
+const Button: React.FC<Props> = ({ children, onClick, icon, backgroundColor, color, disabled, padding, fontSize }) => {
     return (
-        <button 
-            onClick={onClick} 
-            className="customButton"
-            style={{backgroundColor: backgroundColor, color: color}}
+        <button
+            onClick={onClick}
+            className={`customButton ${disabled ? "disabledButton" : "activeButton"}`}
+            style={{ backgroundColor: backgroundColor, color: color, padding: padding, fontSize: fontSize }}
+            disabled={disabled}
         >
             {icon && icon}
-            <p className="pButton">{children}</p>
+            {children}
         </button>
     );
 }

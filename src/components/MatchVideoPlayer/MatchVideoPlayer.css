@@ -1,0 +1,33 @@
+.matchVideoPlayer {
+    width: 100%;
+}
+
+.controlsContainer {
+    margin: 8px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.speedControls {
+    display: flex;
+    gap: 8px;
+}
+
+.speedButton {
+    padding: 4px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.speedButton:hover {
+    background-color: #e0e0e0;
+}
+
+.downloadControl {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}

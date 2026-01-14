@@ -8,16 +8,20 @@
     border-radius: 0.3rem;
     background-color: var(--blanco);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.2s ease;
-}
-
-.pButton {
     font-size: 1rem;
-    margin: 0;
     font-weight: 500;
+    transition: all 0.2s ease;
 }
 
-.customButton:hover {
+.customButton.activeButton:hover {
     background-color: #e0e0e0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    opacity: 0.9;
     cursor: pointer;
+}
+
+.disabledButton {
+    background-color: #f0f0f0;
+    box-shadow: none;
+    opacity: 0.6;
 }
