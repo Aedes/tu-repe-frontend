@@ -4,7 +4,7 @@ import { PencilIcon, CompanyIcon, PaintIcon, StarsIcon } from "../../../assets/I
 
 const Personalization = () => {
     return (
-        <div className="personalizationContainer">
+        <div id="personalization" className="personalizationContainer">
             <div className="personalizationContent">
                 <SubtitleItem
                     text="Personalización total"

@@ -5,7 +5,7 @@ import ItemCard from "../../common/ItemCard/ItemCard";
 
 const WhatIs = () => {
     return (
-        <div className="whatIsContainer">
+        <div id="whatis" className="whatIsContainer">
             <SubtitleItem
                 text="¿Qué es Tu Repe?"
                 icon={<PlayIcon width={"20px"} height={"20px"} fill="#0077b6" />}

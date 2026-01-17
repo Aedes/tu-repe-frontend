@@ -4,23 +4,25 @@ import { InstagramIcon, MailIcon } from "../../../assets/Icons";
 
 const Footer = () => {
     return (
-        <footer className="footerContainer">
+        <footer id="footer" className="footerContainer">
             <div className="footer">
                 <div className="logoAndDescriptionFooter">
-                    <div
-                        className="logoContainer"
-                    >
-                        <img className="logoImg" src={logo} alt="Logo Tu Repe" />
-                        <h2 className="navBarLogo">Tu Repe</h2>
-                    </div>
+                    <a href="#inicio" className="anchordLogo">
+                        <div
+                            className="logoContainer"
+                        >
+                            <img className="logoImg" src={logo} alt="Logo Tu Repe" />
+                            <h2 className="navBarLogo">Tu Repe</h2>
+                        </div>
+                    </a>
                     <p>La plataforma que conecta clubes deportivos con sus jugadores. Revive cada jugada de tu partido, sin mensajes, sin confusión.</p>
                 </div>
                 <div className="fastAccess">
                     <h3>Acceso rápido</h3>
                     <ul className="fastAccessUl">
-                        <li>Inicio</li>
-                        <li>¿Qué es Tu Repe?</li>
-                        <li>Para mi club</li>
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#whatis">¿Qué es Tu Repe?</a></li>
+                        <li><a href="#personalization">Para mi club</a></li>
                     </ul>
                 </div>
                 <div className="contactUs">
@@ -33,7 +35,7 @@ const Footer = () => {
                                 fill="#0077b6"
                             />
                             <p>
-                                aedestech
+                                aedes.tech
                             </p>
                         </div>
                         <div className="network">

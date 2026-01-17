@@ -1,24 +1,22 @@
 import "./NavBar.css"
 import logo from "../../../assets/logo/logo.png"
-import { useNavigate } from "react-router-dom";
 
 const NavBar = () => {
-    const navigate = useNavigate()
-
     return (
         <nav className="navBar">
             <div className="navBarContainer">
-                <div
-                    className="logoContainer"
-                    onClick={() => navigate("/")}
-                >
-                    <img className="logoImg" src={logo} alt="Logo Tu Repe" />
-                    <h2 className="navBarLogo">Tu Repe</h2>
-                </div>
+                <a href="#inicio" className="anchordLogo">
+                    <div
+                        className="logoContainer"
+                    >
+                        <img className="logoImg" src={logo} alt="Logo Tu Repe" />
+                        <h2 className="navBarLogo">Tu Repe</h2>
+                    </div>
+                </a>
                 <ul className="navBarLinks">
-                    <li className="navBarLinkItem">Cómo Funciona</li>
-                    <li className="navBarLinkItem">Para mi club</li>
-                    <li className="navBarLinkItem">Contacto</li>
+                    <li className="navBarLinkItem"><a href="#whatis">¿Qué es Tu Repe?</a></li>
+                    <li className="navBarLinkItem"><a href="#personalization">Para mi club</a></li>
+                    <li className="navBarLinkItem"><a href="#footer">Contacto</a></li>
                 </ul>
             </div>
         </nav>

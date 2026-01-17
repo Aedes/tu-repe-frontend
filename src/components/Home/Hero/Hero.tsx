@@ -7,6 +7,7 @@ import { BACKEND_API_URL } from "../../../config";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { openWhatsappTuRepe } from "../../../openWhatsAppTuRepe";
 
 const Hero = () => {
     const { error, fetchData } = useFetchData<IClub[]>(`${BACKEND_API_URL}/clubs`, "GET")
@@ -29,11 +30,11 @@ const Hero = () => {
     }
 
     return (
-        <div className="heroSection">
+        <div id="inicio" className="heroSection">
             <h1><span>Tu Repe</span>. Donde los partidos vuelven a jugarse.</h1>
             <p className="heroDescription">Tu Repe conecta complejos deportivos con sus jugadores. Grabamos tus partidos y te entregamos el video completo del juego.</p>
             <Button
-                onClick={() => console.log("")}
+                onClick={() => openWhatsappTuRepe()}
                 icon={<CameraIcon
                     width={20}
                     height={20}
