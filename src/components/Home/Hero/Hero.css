@@ -17,6 +17,7 @@
     color: white;
     font-size: 3.5rem;
     text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+    margin: 0 2rem;
 }
 
 .heroSection h1 span {
@@ -28,6 +29,7 @@
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     font-size: 1.5rem;
     max-width: 800px;
+    margin: 0 2rem;
 }
 
 .searchClubSection {
@@ -39,6 +41,7 @@
     border-radius: 0.5rem;
     gap: 1rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 0 2rem;
 }
 
 .searchClubSection h3 {
@@ -112,4 +115,42 @@
 .clubItem:hover,
 .clubItem:focus {
     background-color: var(--blanco);
+}
+
+@media (max-width: 800px) {
+    .searchClubSection {
+        width: 80%;
+    }
+
+    .searchInputContainer {
+        width: 100%;
+    }
+}
+
+@media (max-width: 750px) {
+    .heroSection h1 {
+        font-size: 3rem;
+    }
+
+    .heroDescription {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 450px) {
+    .heroSection h1 {
+        font-size: 2.5rem;
+    }
+
+    .searchClubSection {
+        padding: 2rem 1rem;
+    }
+
+    .searchClubSection h3 {
+        font-size: 1rem;
+    }
+
+    .heroDescription {
+        font-size: 1rem;
+    }
 }

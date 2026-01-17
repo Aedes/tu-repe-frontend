@@ -16,6 +16,7 @@
     display: flex;
     align-items: center;
     gap: .5rem;
+    margin: 2rem;
 }
 
 .noVideosFoundText {
@@ -69,6 +70,15 @@
     padding: 2rem;
     border-radius: 0.5rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin: 0 2rem;
+}
+
+.clubProfileLogoAndNameContainer {
+    width: 100%;
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    justify-content: center;
 }
 
 .clubProfileLogo {
@@ -81,8 +91,8 @@
 }
 
 .clubLogoImg {
-    width: 100%;
-    height: 100%;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
     object-fit: cover;
 }
@@ -99,7 +109,7 @@
 }
 
 .findYourMatchSection {
-    margin: 2rem 0;
+    margin: 2rem;
     background-color: white;
     border-radius: 0.5rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -114,6 +124,12 @@
     justify-content: space-between;
     gap: 3rem;
     flex-wrap: wrap;
+}
+
+.filterContainer {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
 }
 
 .filter {
@@ -133,6 +149,7 @@
 .findYourMatchTitleContainer {
     background: linear-gradient(to right, #edfafd, white);
     border-bottom: 1px solid lightgrey;
+    border-radius: 0.5rem 0.5rem 0 0;
 }
 
 .findYourMatchHeader {
@@ -140,6 +157,7 @@
     align-items: center;
     gap: 1rem;
     padding: 2rem;
+    border-radius: 0.5rem 0.5rem 0 0;
 }
 
 .findYourMatchIcon {
@@ -193,8 +211,7 @@
 }
 
 .matchVideoPlayerContainer {
-    width: 100%;
-    margin-bottom: 2rem;
+    margin: 0 2rem 2rem 2rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 0.5rem;
 }
@@ -240,4 +257,156 @@
 
 .pSlices {
     color: grey;
+}
+
+.clubProfileItems.mobile {
+    display: none;
+}
+
+.descriptionMobile {
+    display: none;
+}
+
+.findYourMatchHeader.mobile {
+    display: none;
+}
+
+@media (max-width: 900px) {
+    .filtersContainer {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 560px) {
+    .clubProfileLogoAndName h1 {
+        font-size: 1.7rem;
+    }
+
+    .clubProfileLogoAndName p {
+        font-size: .9rem;
+        letter-spacing: -0.2px;
+    }
+
+    .clubProfileLogo {
+        width: 120px;
+        height: 120px;
+    }
+
+    .clubLogoImg {
+        width: 120px;
+        height: 120px;
+    }
+
+    .findYourMatchTitleAndDescription h2 {
+        font-size: 1.5rem;
+        margin-bottom: .2rem;
+    }
+}
+
+@media (max-width: 530px) {
+    .clubProfileItems.desktop {
+        display: none;
+    }
+
+    .descriptionDesktop {
+        display: none;
+    }
+
+    .clubProfileItems.mobile {
+        display: flex;
+        margin-top: 0;
+    }
+
+    .clubProfileLogoAndName {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .clubProfileLogoAndNameContainer {
+        justify-content: center;
+    }
+
+    .clubProfileItem {
+        gap: 0.5rem;
+        color: grey;
+    }
+
+    .descriptionMobile {
+        display: flex;
+        align-self: self-start;
+        color: grey;
+    }
+
+    .filterContainer {
+        flex-direction: column;
+        align-items: start;
+    }
+}
+
+@media (max-width: 400px) {
+    .clubProfileLogoAndName {
+        margin: 0 1rem;
+        padding: 1.5rem;
+        gap: 1.2rem;
+    }
+
+    .findYourMatchSection {
+        margin: 1rem;
+    }
+
+    .clubProfileLogoAndNameContainer {
+        gap: 1rem;
+    }
+
+    .clubProfileLogoAndNameContainer h1 {
+        font-size: 1.5rem;
+    }
+
+    .clubProfileLogo {
+        width: 100px;
+        height: 100px;
+    }
+
+    .clubLogoImg {
+        width: 100px;
+        height: 100px;
+    }
+
+    .findYourMatchHeader {
+        padding: 1.5rem;
+    }
+
+    .filtersContainer {
+        padding: 1.5rem;
+    }
+
+    .buttonVideoContainer {
+        padding: 0 1.5rem 1.5rem 1.5rem;
+    }
+
+    .importantNotice {
+        margin: 0 1.5rem 0 1.5rem;
+    }
+
+    .matchVideoPlayerContainer {
+        margin: 0 1rem 2rem 1rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .findYourMatchHeader.desktop {
+        display: none;
+    }
+
+    .findYourMatchHeader.mobile {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .titleFindYourMatch {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        color: black;
+    }
 }

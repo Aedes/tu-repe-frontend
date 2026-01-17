@@ -80,43 +80,72 @@ const ClubProfile = () => {
             </div>
             <div className="clubProfileContent">
                 <div className="clubProfileLogoAndName">
-                    <div className="clubProfileLogo">
-                        <img className="clubLogoImg" src={logoClub} alt={`Logo Club ${club?.name}`} />
+                    <div className="clubProfileLogoAndNameContainer">
+                        <div className="clubProfileLogo">
+                            <img className="clubLogoImg" src={logoClub} alt={`Logo Club ${club?.name}`} />
+                        </div>
+                        <div className="clubProfileNameAndLocation">
+                            <h1>{club?.name}</h1>
+                            <p className="descriptionDesktop">7 canchas de Pádel de alto rendimiento.</p>
+                            <div className="clubProfileItems desktop">
+                                <div className="clubProfileItem">
+                                    <PinIcon
+                                        width="16"
+                                        height="16"
+                                        fill="#a9d703"
+                                    />
+                                    <p>Coronel Suarez 936, San Rafael, Mendoza</p>
+                                </div>
+                                <div className="clubProfileItem">
+                                    <PhoneIcon
+                                        width="16"
+                                        height="16"
+                                        fill="#a9d703"
+                                    />
+                                    <p>2604627402</p>
+                                </div>
+                                <div className="clubProfileItem">
+                                    <InstagramIcon
+                                        width="16"
+                                        height="16"
+                                        fill="#a9d703"
+                                    />
+                                    <p>complejocenter</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div className="clubProfileNameAndLocation">
-                        <h1>{club?.name}</h1>
-                        <p>7 canchas de Pádel de alto rendimiento.</p>
-                        <div className="clubProfileItems">
-                            <div className="clubProfileItem">
-                                <PinIcon
-                                    width="16"
-                                    height="16"
-                                    fill="#a9d703"
-                                />
-                                <p>Coronel Suarez 936, San Rafael, Mendoza</p>
-                            </div>
-                            <div className="clubProfileItem">
-                                <PhoneIcon
-                                    width="16"
-                                    height="16"
-                                    fill="#a9d703"
-                                />
-                                <p>2604627402</p>
-                            </div>
-                            <div className="clubProfileItem">
-                                <InstagramIcon
-                                    width="16"
-                                    height="16"
-                                    fill="#a9d703"
-                                />
-                                <p>complejocenter</p>
-                            </div>
+                    <p className="descriptionMobile">7 canchas de Pádel de alto rendimiento.</p>
+                    <div className="clubProfileItems mobile">
+                        <div className="clubProfileItem">
+                            <PinIcon
+                                width="16"
+                                height="16"
+                                fill="#a9d703"
+                            />
+                            <p>Coronel Suarez 936, San Rafael, Mendoza</p>
+                        </div>
+                        <div className="clubProfileItem">
+                            <PhoneIcon
+                                width="16"
+                                height="16"
+                                fill="#a9d703"
+                            />
+                            <p>2604627402</p>
+                        </div>
+                        <div className="clubProfileItem">
+                            <InstagramIcon
+                                width="16"
+                                height="16"
+                                fill="#a9d703"
+                            />
+                            <p>complejocenter</p>
                         </div>
                     </div>
                 </div>
                 <div className="findYourMatchSection">
                     <div className="findYourMatchTitleContainer">
-                        <div className="findYourMatchHeader">
+                        <div className="findYourMatchHeader desktop">
                             <div className="findYourMatchIcon">
                                 <SearchIcon
                                     width="32"
@@ -129,10 +158,25 @@ const ClubProfile = () => {
                                 <p>Selecciona cancha, fecha y horario para ver el video</p>
                             </div>
                         </div>
+                        <div className="findYourMatchHeader mobile">
+                            <div className="titleFindYourMatch">
+                                <div className="findYourMatchIcon">
+                                    <SearchIcon
+                                        width="24"
+                                        height="24"
+                                        fill="#1c67ba"
+                                    />
+                                </div>
+                                <h2>Encuentra tu partido</h2>
+                            </div>
+                            <div className="findYourMatchTitleAndDescription">
+                                <p>Selecciona cancha, fecha y horario para ver el video</p>
+                            </div>
+                        </div>
                     </div>
                     <div className="filtersContainer">
-                        <div>
-                            <label htmlFor="filter-court" style={{ marginRight: "0.5rem", fontWeight: 500 }}>Selecciona una cancha:</label>
+                        <div className="filterContainer">
+                            <label htmlFor="filter-court" style={{ fontWeight: 500 }}>Selecciona una cancha:</label>
                             <select id="filter-day" className="filter" onChange={(e) => setCourtId(e.target.value)}>
                                 <option value="">¿En qué cancha jugaste?</option>
                                 {
@@ -142,8 +186,8 @@ const ClubProfile = () => {
                                 }
                             </select>
                         </div>
-                        <div>
-                            <label htmlFor="filter-day" style={{ marginRight: "0.5rem", fontWeight: 500 }}>Selecciona un día: </label>
+                        <div className="filterContainer">
+                            <label htmlFor="filter-day" style={{ fontWeight: 500 }}>Selecciona un día: </label>
                             <select id="filter-day" className="filter" onChange={(e) => setDay(e.target.value)}>
                                 <option value="">Selecciona un día</option>
                                 {(() => {
@@ -167,8 +211,8 @@ const ClubProfile = () => {
                                 })()}
                             </select>
                         </div>
-                        <div>
-                            <label htmlFor="filter-hour" style={{ marginRight: "0.5rem", fontWeight: 500 }}>Hora</label>
+                        <div className="filterContainer">
+                            <label htmlFor="filter-hour" style={{ fontWeight: 500 }}>Hora</label>
                             <select id="filter-hour" className="filter" onChange={(e) => setHour(e.target.value)}>
                                 <option value="">¿A qué hora?</option>
                                 {(() => {
@@ -201,6 +245,7 @@ const ClubProfile = () => {
                     </div>
                     <div className="buttonVideoContainer">
                         <Button
+                            margin="0"
                             backgroundColor="#1c67ba"
                             color="white"
                             onClick={() => fetchVideos()}
@@ -212,6 +257,7 @@ const ClubProfile = () => {
                                     fill="white"
                                 />
                             }
+                            width={window.innerWidth <= 530 ? "100%" : ""}
                         >
                             {isLoadingVideos ? "Buscando partido..." : "Ver partido"}
                         </Button>

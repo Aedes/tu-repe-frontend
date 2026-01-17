@@ -196,6 +196,7 @@ const MatchVideoPlayer: React.FC<Props> = ({ videos }) => {
                 </div>
                 <div className="downloadControl">
                     <Button
+                        margin="0"
                         onClick={downloadVideo}
                         backgroundColor="#28a745"
                         color="#fff"
@@ -212,6 +213,7 @@ const MatchVideoPlayer: React.FC<Props> = ({ videos }) => {
                         Descargar Parte {currentIndex + 1}
                     </Button>
                     <Button
+                        margin="0"
                         onClick={startRecording}
                         backgroundColor="#007bff"
                         color="#fff"
@@ -229,6 +231,7 @@ const MatchVideoPlayer: React.FC<Props> = ({ videos }) => {
                         {isRecording ? "Grabando..." : "Grabar Clip"}
                     </Button>
                     <Button
+                        margin="0"
                         onClick={stopRecording}
                         backgroundColor="red"
                         color="#fff"

@@ -16,7 +16,7 @@
 }
 
 .personalizationTitle {
-    margin: 1rem 0;
+    margin: 1rem 2rem;
     font-size: 3rem;
     color: black;
 }
@@ -30,16 +30,18 @@
 }
 
 .examplesProfilesContainer {
-    margin: 4rem 0;
+    margin: 4rem 2rem;
     display: flex;
+    justify-content: center;
     gap: 2rem;
+    flex-wrap: wrap;
 }
 
 .exampleProfile {
     display: flex;
     flex-direction: column;
     align-items: start;
-    width: 400px;
+    width: 350px;
     border-radius: 10px;
     position: relative;
     transition: all .2s ease;
@@ -161,7 +163,8 @@
     display: flex;
     justify-content: center;
     gap: 3rem;
-    margin-bottom: 5rem;
+    margin: 0 2rem 5rem 2rem;
+    flex-wrap: wrap;
 }
 
 .characteristic {
@@ -200,4 +203,20 @@
 
 .charDescription {
     color: grey;
+}
+
+@media (max-width: 750px) {
+    .personalizationTitle {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 450px) {
+    .exampleProfile {
+        width: 100%;
+    }
+
+    .characteristic {
+        width: 100%;
+    }
 }

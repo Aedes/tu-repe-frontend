@@ -5,7 +5,7 @@ import { InstagramIcon, MailIcon } from "../../../assets/Icons";
 const Footer = () => {
     return (
         <footer id="footer" className="footerContainer">
-            <div className="footer">
+            <div className="footerContent">
                 <div className="logoAndDescriptionFooter">
                     <a href="#inicio" className="anchordLogo">
                         <div
