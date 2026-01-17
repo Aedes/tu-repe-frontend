@@ -12,6 +12,7 @@
     font-weight: 500;
     transition: all 0.2s ease;
     margin: 0 2rem;
+    color: black;
 }
 
 .customButton.activeButton:hover {
