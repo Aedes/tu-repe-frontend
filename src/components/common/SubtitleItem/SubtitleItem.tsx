@@ -5,7 +5,7 @@ interface Props {
     icon?: React.ReactNode;
 }
 
-const SubtitleItem: React.FC<Props> = ({text, icon}) => {
+const SubtitleItem: React.FC<Props> = ({ text, icon }) => {
     return (
         <div className="subtitleItem">
             {icon && icon}

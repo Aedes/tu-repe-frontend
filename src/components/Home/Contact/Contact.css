@@ -1,0 +1,20 @@
+.contactContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    padding: 5rem 0;
+    background-color: var(--azul-claro);
+    color: white;
+}
+
+.contactContainer h2 {
+    font-size: 2.5rem;
+    width: 500px;
+}
+
+.contactContainer p {
+    font-size: 1.3rem;
+}

@@ -29,3 +29,10 @@
     font-size: 2.5rem;
     color: black;
 }
+
+.itemCardContainer {
+    margin: 4rem 0 6rem 0;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}

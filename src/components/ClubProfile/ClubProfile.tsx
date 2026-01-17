@@ -5,7 +5,7 @@ import type { IClub, ICourt } from "../../types";
 import { BACKEND_API_URL } from "../../config";
 import { useEffect, useState } from "react";
 import logoClub from "../../assets/tmp/center-logo.jpeg"
-import { PlayIcon, SearchIcon, PinIcon, PhoneIcon, InstagramIcon } from "../../assets/Icons";
+import { PlayIcon, SearchIcon, PinIcon, PhoneIcon, InstagramIcon, NoVideoIcon } from "../../assets/Icons";
 import Button from "../common/Button/Button";
 import { CameraIcon } from "../../assets/Icons";
 import MatchVideoPlayer from "../MatchVideoPlayer/MatchVideoPlayer";
@@ -226,7 +226,12 @@ const ClubProfile = () => {
                         {
                             videos.length === 0 ?
                                 <div className="noVideosFoundContainer animationIn">
-                                    <p className="noVideosFoundText">No encontramos ningún partido aquí. Por favor, verifica la cancha, fecha y hora.</p>
+                                    <NoVideoIcon
+                                        width="20px"
+                                        height="20px"
+                                        fill="black"
+                                    />
+                                    <p className="noVideosFoundText">No encontramos ningún partido. Por favor, verifica la cancha, fecha y hora.</p>
                                 </div>
                                 :
                                 <div className="matchVideoPlayerContainer animationIn">

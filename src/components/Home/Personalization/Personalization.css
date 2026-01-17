@@ -1,0 +1,203 @@
+.personalizationContainer {
+    width: 100%;
+    background-color: white;
+    padding-top: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.personalizationContent {
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.personalizationTitle {
+    margin: 1rem 0;
+    font-size: 3rem;
+    color: black;
+}
+
+.personalizationTitle span {
+    background: linear-gradient(90deg, var(--azul-claro), #40916c);
+    -webkit-background-clip: "text";
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
+
+.examplesProfilesContainer {
+    margin: 4rem 0;
+    display: flex;
+    gap: 2rem;
+}
+
+.exampleProfile {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    width: 400px;
+    border-radius: 10px;
+    position: relative;
+    transition: all .2s ease;
+}
+
+.exampleProfile.futbol {
+    border: 1px solid var(--celeste);
+    box-shadow: 0px 0px 10px 0px rgba(59, 62, 255, 0.5);
+}
+
+.exampleProfile.padel {
+    border: 1px solid #bcecd7;
+    box-shadow: 0px 0px 10px 0px rgba(65, 255, 59, 0.5);
+}
+
+.exampleProfile.basquet {
+    border: 1px solid rgb(243, 179, 179);
+    box-shadow: 0px 0px 10px 0px rgba(255, 59, 59, 0.5);
+}
+
+.exampleProfile.futbol:hover {
+    border: 1px solid var(--azul-claro);
+    box-shadow: 0px 0px 15px 0px rgba(59, 62, 255, 0.5);
+}
+
+.exampleProfile.padel:hover {
+    border: 1px solid #40916c;
+    box-shadow: 0px 0px 15px 0px rgba(65, 255, 59, 0.5);
+}
+
+.exampleProfile.basquet:hover {
+    border: 1px solid rgb(221, 76, 76);
+    box-shadow: 0px 0px 15px 0px rgba(255, 59, 59, 0.5);
+}
+
+.backgroundImageProfile {
+    width: 100%;
+    height: 150px;
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.logoExampleProfile {
+    position: absolute;
+    padding: .8rem;
+    border-radius: 0.5rem;
+    margin: 1rem 1rem 2rem 2rem;
+    border: 4px solid white;
+    box-shadow: 0px 0px 4px 0px rgba(54, 54, 54, 0.75);
+    top: 90px;
+}
+
+.exampleProfile.futbol .logoExampleProfile {
+    background-color: var(--azul-claro);
+}
+
+.exampleProfile.padel .logoExampleProfile {
+    background-color: rgb(0, 173, 0);
+}
+
+.exampleProfile.basquet .logoExampleProfile {
+    background-color: red;
+}
+
+.nameExampleProfileAndDescription {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 1rem;
+    margin: 50px 1rem 2rem 2rem;
+}
+
+.nameExampleProfileAndDescription h3 {
+    font-size: 1.5rem;
+}
+
+.nameExampleProfileAndDescription p {
+    color: grey;
+}
+
+.exampleProfile.padel .nameExampleProfileAndDescription h3 {
+    color: #40916c
+}
+
+.exampleProfile.basquet .nameExampleProfileAndDescription h3 {
+    color: rgb(221, 76, 76);
+}
+
+.backgroundFutbol {
+    position: relative;
+    width: 100%;
+    background-image: url("/images/futbol-example.jpeg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    overflow: hidden;
+}
+
+.backgroundPadel {
+    position: relative;
+    width: 100%;
+    background-image: url("/images/padel-example.jpeg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    overflow: hidden;
+}
+
+.backgroundBasquet {
+    position: relative;
+    width: 100%;
+    background-image: url("/images/basquet-example.jpeg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    overflow: hidden;
+}
+
+.characteristicsContainer {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    margin-bottom: 5rem;
+}
+
+.characteristic {
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .5rem;
+}
+
+.charIconContainer {
+    padding: .5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.characteristic.blue .charIconContainer {
+    background-color: var(--celeste);
+}
+
+.characteristic.green .charIconContainer {
+    background-color: #bcecd7;
+}
+
+.characteristic.red .charIconContainer {
+    background-color: rgb(243, 179, 179);
+}
+
+.charTitle {
+    font-size: 1.3rem;
+    color: black;
+    font-weight: 550;
+}
+
+.charDescription {
+    color: grey;
+}
