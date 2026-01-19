@@ -1,11 +1,11 @@
 import React, { useRef, useState } from "react";
 import "./MatchVideoPlayer.css"
-import Button from "../common/Button/Button";
-import { DownloadIcon, StartRecordingIcon, StopRecordingIcon, CheckIcon } from "../../assets/Icons";
-import Modal from "../common/Modal/Modal";
+import Button from "../../common/Button/Button";
+import { DownloadIcon, StartRecordingIcon, StopRecordingIcon, CheckIcon } from "../../../assets/Icons";
+import Modal from "../../common/Modal/Modal";
 import { toast } from "sonner";
-import { BACKEND_API_URL } from "../../config";
-import { useFetchData } from "../../hooks/useFetchData";
+import { BACKEND_API_URL } from "../../../config";
+import { useFetchData } from "../../../hooks/useFetchData";
 
 type Props = {
     videos: string[];

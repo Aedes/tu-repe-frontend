@@ -1,0 +1,32 @@
+.statCardContainer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex: 1;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    transition: all 0.2s;
+    gap: 2rem;
+}
+
+.statCardContainer:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.statCardTitle {
+    font-size: 1.8rem;
+    color: black;
+}
+
+.statCardQuantity {
+    color: grey;
+}
+
+.statCardIcon {
+    padding: .5rem;
+    border-radius: 10px;
+    background-color: var(--celeste);
+}

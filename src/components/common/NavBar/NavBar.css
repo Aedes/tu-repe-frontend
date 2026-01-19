@@ -15,6 +15,10 @@
     z-index: 1000;
 }
 
+.navBar.navBarClub {
+    height: 60px;
+}
+
 .navBarContainer {
     max-width: 1200px;
     width: 100%;

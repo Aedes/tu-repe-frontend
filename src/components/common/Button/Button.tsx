@@ -2,7 +2,7 @@ import "./Button.css"
 
 interface Props {
     children: React.ReactNode;
-    onClick: () => void;
+    onClick?: () => void;
     icon?: React.ReactNode;
     backgroundColor?: string;
     color?: string;
@@ -11,11 +11,13 @@ interface Props {
     fontSize?: string;
     width?: string;
     margin?: string;
+    type?: "button" | "submit" | "reset";
 }
 
-const Button: React.FC<Props> = ({ children, onClick, icon, backgroundColor, color, disabled, padding, fontSize, width, margin }) => {
+const Button: React.FC<Props> = ({ children, onClick, icon, backgroundColor, color, disabled, padding, fontSize, width, margin, type }) => {
     return (
         <button
+            type={type || "button"}
             onClick={onClick}
             className={`customButton ${disabled ? "disabledButton" : "activeButton"}`}
             style={{ backgroundColor: backgroundColor, color: color, padding: padding, fontSize: fontSize, width: width, margin: margin }}

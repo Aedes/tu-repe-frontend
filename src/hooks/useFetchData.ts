@@ -49,7 +49,7 @@ export const useFetchData = <TResponse, TBody = unknown>(
 
         } catch (err) {
             setError(err as Error);
-            throw err;
+            return null as unknown as TResponse
         } finally {
             setIsLoading(false);
         }

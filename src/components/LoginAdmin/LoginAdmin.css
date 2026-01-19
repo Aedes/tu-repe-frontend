@@ -1,0 +1,55 @@
+.loginAdminContainer {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.loginAdminPanel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    width: 400px;
+}
+
+.loginAdminTitle {
+    font-size: 2rem;
+    margin-bottom: 2.2rem;
+    text-align: center;
+}
+
+.loginAdminForm {
+    width: 100%;
+}
+
+
+.loginAdminField {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.loginAdminField label {
+    color: #0f2345;
+    font-size: 1rem;
+    margin-bottom: 0.45rem;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+}
+
+.loginAdminInput {
+    padding: .5rem 1rem;
+    border: 1.5px solid var(--celeste);
+    border-radius: 8px;
+    outline: none;
+    font-size: 1rem;
+    color: #0f2345;
+    transition: border-color 0.3s;
+    background-color: #f4fafd;
+}

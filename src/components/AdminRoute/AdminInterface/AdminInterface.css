@@ -1,0 +1,112 @@
+.loadingClubsStatsContainer {
+    width: 100%;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.adminInterfaceContainer {
+    width: 100%;
+    margin-top: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.adminInterfacePanel {
+    max-width: 1200px;
+    width: calc(100% - 4rem);
+    margin: 2rem;
+}
+
+.adminInterfaceTitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.adminInterfaceTitle h1 {
+    font-size: 2rem;
+    color: black;
+    margin-bottom: .5rem;
+}
+
+.adminInterfaceTitle p {
+    font-size: 1.2rem;
+    color: grey;
+}
+
+.adminInterfaceStats {
+    margin: 2rem 0;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.listOfClubsTableContainer {
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
+
+.listOfClubsTitle {
+    font-size: 1.5rem;
+    color: black;
+    margin-bottom: 1rem;
+}
+
+.listOfClubsTable {
+    width: 100%;
+    color: black;
+    letter-spacing: 0;
+}
+
+.listOfClubsTable th {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.listOfClubsTable th,
+.listOfClubsTable td {
+    text-align: left;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f4fafd;
+}
+
+.listOfClubsTable tr {
+    transition: background-color 0.2s ease;
+}
+
+
+.listOfClubsTable tr:hover {
+    background-color: #f4fafd;
+}
+
+.clubNameCell {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logoClubTable {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.viewDetailsButton {
+    padding: 0.4rem 0.8rem;
+    background-color: var(--azul-claro);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.viewDetailsButton:hover {
+    background-color: var(--azul-oscuro);
+}

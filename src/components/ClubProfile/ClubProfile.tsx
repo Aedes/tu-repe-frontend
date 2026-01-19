@@ -8,7 +8,7 @@ import logoClub from "../../assets/tmp/center-logo.jpeg"
 import { PlayIcon, SearchIcon, PinIcon, PhoneIcon, InstagramIcon, NoVideoIcon } from "../../assets/Icons";
 import Button from "../common/Button/Button";
 import { CameraIcon } from "../../assets/Icons";
-import MatchVideoPlayer from "../MatchVideoPlayer/MatchVideoPlayer";
+import MatchVideoPlayer from "./MatchVideoPlayer/MatchVideoPlayer";
 import { toast } from "sonner";
 
 const ClubProfile = () => {
