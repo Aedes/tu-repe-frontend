@@ -57,7 +57,10 @@ const Hero = () => {
                             type="text"
                             placeholder="Escribí el nombre del club o complejo..."
                             value={searchTerm}
-                            onChange={e => setSearchTerm(e.target.value)}
+                            onChange={(e) => {
+                                if (clubs.length === 0) return;
+                                setSearchTerm(e.target.value)
+                            }}
                         />
                     </div>
                 </div>

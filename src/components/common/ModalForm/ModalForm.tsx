@@ -10,6 +10,7 @@ interface Props {
         type: string;
         name: string;
         placeholder?: string;
+        required?: boolean;
     }>
     title: string
     initialData: { [key: string]: any }
@@ -18,9 +19,10 @@ interface Props {
     }) => void;
     onClose: () => void
     disabledButtons?: boolean
+    subtitle?: string
 }
 
-const ModalForm: React.FC<Props> = ({ isOpen, title, inputs, initialData, onSubmitForm, onClose, disabledButtons }) => {
+const ModalForm: React.FC<Props> = ({ isOpen, title, inputs, initialData, onSubmitForm, onClose, disabledButtons, subtitle }) => {
     const { dataForm, handleChange, deleteData } = useFormData(initialData)
 
     const handleCloseForm = () => {
@@ -31,7 +33,10 @@ const ModalForm: React.FC<Props> = ({ isOpen, title, inputs, initialData, onSubm
     return (
         <Modal isOpen={isOpen}>
             <div className="modalFormContainer">
-                <h2 className="modalFormTitle">{title}</h2>
+                <div>
+                    <h2 className="modalFormTitle">{title}</h2>
+                    {subtitle && <p className="modalSubtitle">{subtitle}</p>}
+                </div>
                 <form className="modalForm"
                     onSubmit={(e) => {
                         e.preventDefault()
@@ -41,16 +46,30 @@ const ModalForm: React.FC<Props> = ({ isOpen, title, inputs, initialData, onSubm
                     {
                         inputs.map((input, index) => (
                             <div className="modalFormField" key={index}>
-                                <label htmlFor={input.name}>{input.label}</label>
-                                <input
-                                    type={input.type}
-                                    id={input.name}
-                                    name={input.name}
-                                    placeholder={input.placeholder || ""}
-                                    className="modalFormInput"
-                                    onChange={handleChange}
-                                    required
-                                />
+                                <label htmlFor={input.name}>{input.required ? "* " : ""}{input.label}</label>
+                                {
+                                    input.type === "textarea" ? (
+                                        <textarea
+                                            id={input.name}
+                                            name={input.name}
+                                            placeholder={input.placeholder || ""}
+                                            className="modalFormTextarea"
+                                            onChange={handleChange}
+                                            required={input.required || false}
+                                            maxLength={200}
+                                        />
+                                    ) : (
+                                        <input
+                                            type={input.type}
+                                            id={input.name}
+                                            name={input.name}
+                                            placeholder={input.placeholder || ""}
+                                            className="modalFormInput"
+                                            onChange={handleChange}
+                                            required={input.required || false}
+                                        />
+                                    )
+                                }
                             </div>
                         ))
                     }

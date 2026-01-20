@@ -74,6 +74,8 @@ const ClubProfile = () => {
         </div>
     }
 
+    const location = `${club?.address} ${club?.city} ${club?.province}`.replace(/ /g, "+")
+
     return (
         <div className="clubProfileContainer">
             <div className="clubImg">
@@ -86,7 +88,7 @@ const ClubProfile = () => {
                         </div>
                         <div className="clubProfileNameAndLocation">
                             <h1>{club?.name}</h1>
-                            <p className="descriptionDesktop">7 canchas de Pádel de alto rendimiento.</p>
+                            {club?.description && <p className="descriptionDesktop">{club?.description}</p>}
                             <div className="clubProfileItems desktop">
                                 <div className="clubProfileItem">
                                     <PinIcon
@@ -94,28 +96,37 @@ const ClubProfile = () => {
                                         height="16"
                                         fill="#a9d703"
                                     />
-                                    <p>Coronel Suarez 936, San Rafael, Mendoza</p>
+                                    <a className="anchordInstagram" target="_blank" rel="noopener noreferrer" href={`https://www.google.com/maps/search/?api=1&query=${location}`}>{club?.address}, {club?.city}, {club?.province}</a>
                                 </div>
-                                <div className="clubProfileItem">
-                                    <PhoneIcon
-                                        width="16"
-                                        height="16"
-                                        fill="#a9d703"
-                                    />
-                                    <p>2604627402</p>
-                                </div>
-                                <div className="clubProfileItem">
-                                    <InstagramIcon
-                                        width="16"
-                                        height="16"
-                                        fill="#a9d703"
-                                    />
-                                    <p>complejocenter</p>
-                                </div>
+                                {
+                                    club?.instagramHandle &&
+                                    <div className="clubProfileItem">
+                                        <InstagramIcon
+                                            width="16"
+                                            height="16"
+                                            fill="#a9d703"
+                                        />
+                                        <a className="anchordInstagram" target="_blank" rel="noopener noreferrer" href={`https://instagram.com/${club.instagramHandle}`}>{club.instagramHandle}</a>
+                                    </div>
+                                }
+                                {
+                                    club?.phone &&
+                                    <div className="clubProfileItem">
+                                        <PhoneIcon
+                                            width="16"
+                                            height="16"
+                                            fill="#a9d703"
+                                        />
+                                        <p>{club.phone}</p>
+                                    </div>
+                                }
+                            </div>
+                            <div className="hoursContainer desktop">
+                                <p className="clubHours"><span>De</span> {club?.openTime.split(":")[0]}:{club?.openTime.split(":")[1]} a {club?.closeTime.split(":")[0]}:{club?.closeTime.split(":")[1]} hs</p>
                             </div>
                         </div>
                     </div>
-                    <p className="descriptionMobile">7 canchas de Pádel de alto rendimiento.</p>
+                    <p className="descriptionMobile">{club?.description}</p>
                     <div className="clubProfileItems mobile">
                         <div className="clubProfileItem">
                             <PinIcon
@@ -123,24 +134,33 @@ const ClubProfile = () => {
                                 height="16"
                                 fill="#a9d703"
                             />
-                            <p>Coronel Suarez 936, San Rafael, Mendoza</p>
+                            <a className="anchordInstagram" target="_blank" rel="noopener noreferrer" href={`https://www.google.com/maps/search/?api=1&query=${location}`}>{club?.address}, {club?.city}, {club?.province}</a>
                         </div>
-                        <div className="clubProfileItem">
-                            <PhoneIcon
-                                width="16"
-                                height="16"
-                                fill="#a9d703"
-                            />
-                            <p>2604627402</p>
-                        </div>
-                        <div className="clubProfileItem">
-                            <InstagramIcon
-                                width="16"
-                                height="16"
-                                fill="#a9d703"
-                            />
-                            <p>complejocenter</p>
-                        </div>
+                        {
+                            club?.instagramHandle &&
+                            <div className="clubProfileItem">
+                                <InstagramIcon
+                                    width="16"
+                                    height="16"
+                                    fill="#a9d703"
+                                />
+                                <a className="anchordInstagram" target="_blank" rel="noopener noreferrer" href={`https://instagram.com/${club.instagramHandle}`}>{club.instagramHandle}</a>
+                            </div>
+                        }
+                        {
+                            club?.phone &&
+                            <div className="clubProfileItem">
+                                <PhoneIcon
+                                    width="16"
+                                    height="16"
+                                    fill="#a9d703"
+                                />
+                                <p>{club.phone}</p>
+                            </div>
+                        }
+                    </div>
+                    <div className="hoursContainer mobile">
+                        <p className="clubHours"><span>De</span> {club?.openTime.split(":")[0]}:{club?.openTime.split(":")[1]} a {club?.closeTime.split(":")[0]}:{club?.closeTime.split(":")[1]} hs</p>
                     </div>
                 </div>
                 <div className="findYourMatchSection">
