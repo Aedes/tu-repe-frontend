@@ -109,12 +109,36 @@
     transition: all 0.1s ease;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     color: black;
 }
 
 .clubItem:hover,
 .clubItem:focus {
     background-color: var(--blanco);
+}
+
+.searchLogoImg {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.searchClubName {
+    font-size: .9rem;
+    font-weight: 500;
+}
+
+.logoClubContainer {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.searchLocation {
+    font-size: .8rem;
+    color: grey;
 }
 
 @media (max-width: 800px) {

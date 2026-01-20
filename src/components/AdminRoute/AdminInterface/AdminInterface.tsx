@@ -2,12 +2,11 @@ import "./AdminInterface.css"
 import NavBar from "../../common/NavBar/NavBar";
 import StatCard from "./StatCard/StatCard";
 import { CameraIcon, CompanyIcon } from "../../../assets/Icons";
-import centerLogo from "../../../assets/tmp/center-logo.jpeg"
 import Button from "../../common/Button/Button";
 import { useEffect, useState } from "react";
 import { useFetchData } from "../../../hooks/useFetchData";
 import type { ClubWithCourts, IClub } from "../../../types";
-import { BACKEND_API_URL } from "../../../config";
+import { BACKEND_API_URL, DEFAUL_PROFILE_IMAGE_URL } from "../../../config";
 import { toast } from "sonner";
 import ModalForm from "../../common/ModalForm/ModalForm";
 import Modal from "../../common/Modal/Modal";
@@ -54,7 +53,7 @@ const AdminInterface = () => {
             <div className="adminInterfacePanel">
                 <div className="adminInterfaceTitle">
                     <div>
-                        <h1>Hola, Aedes</h1>
+                        <h1>Hola, Aedes 👋</h1>
                         <p>Bienvenido al panel de administración de Tu Repe</p>
                     </div>
                     <Button
@@ -110,10 +109,13 @@ const AdminInterface = () => {
                                             clubs.map(c => (
                                                 <tr key={c.id}>
                                                     <td className="clubNameCell">
-                                                        <img className="logoClubTable" src={centerLogo} alt="Logo del club" />
+                                                        <img className="logoClubTable" src={c.profileImageUrl ? c.profileImageUrl : DEFAUL_PROFILE_IMAGE_URL} alt="Logo del club" />
                                                         {c.name}
                                                     </td>
-                                                    <td>Mendoza, Argentina</td>
+                                                    <td className="clubLocationCell">
+                                                        <p className="city">{c.city}, {c.province}</p>
+                                                        <p className="address">{c.address}</p>
+                                                    </td>
                                                     <td>{c.courts.length}</td>
                                                     <td>
                                                         <button
