@@ -76,6 +76,8 @@ const AdminInterface = () => {
         const response = await fetchDataUploadLogo(formData)
         if (response) {
             setClubSelected(prevClub => prevClub ? { ...prevClub, profileImageUrl: response.profileImageUrl, profileImagePublicId: response.profileImagePublicId } : null)
+            setNewData(prevClub => prevClub ? { ...prevClub, ...response } : null)
+            setClubs(prevClubs => prevClubs.map(c => c.id === response.id ? { ...c, ...response } : c))
             toast.success("Imagen subida exitosamente.")
             return
         }
@@ -93,6 +95,8 @@ const AdminInterface = () => {
         const response = await fetchDataUploadCover(formData)
         if (response) {
             setClubSelected(prevClub => prevClub ? { ...prevClub, coverImageUrl: response.coverImageUrl, coverImagePublicId: response.coverImagePublicId } : null)
+            setNewData(prevClub => prevClub ? { ...prevClub, ...response } : null)
+            setClubs(prevClubs => prevClubs.map(c => c.id === response.id ? { ...c, ...response } : c))
             toast.success("Imagen subida exitosamente.")
             return
         }
@@ -105,6 +109,8 @@ const AdminInterface = () => {
         const response = await fetchDataDeleteLogo()
         if (response) {
             setClubSelected(prevClub => prevClub ? { ...prevClub, profileImageUrl: undefined, profileImagePublicId: undefined } : null)
+            setNewData(prevClub => prevClub ? { ...prevClub, ...response } : null)
+            setClubs(prevClubs => prevClubs.map(c => c.id === response.id ? { ...c, ...response } : c))
             toast.success("Imagen eliminada exitosamente.")
             return
         }
@@ -117,6 +123,8 @@ const AdminInterface = () => {
         const response = await fetchDataDeleteCover()
         if (response) {
             setClubSelected(prevClub => prevClub ? { ...prevClub, coverImageUrl: undefined, coverImagePublicId: undefined } : null)
+            setNewData(prevClub => prevClub ? { ...prevClub, ...response } : null)
+            setClubs(prevClubs => prevClubs.map(c => c.id === response.id ? { ...c, ...response } : c))
             toast.success("Imagen eliminada exitosamente.")
             return
         }
