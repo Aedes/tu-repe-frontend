@@ -10,12 +10,7 @@ interface Props {
 const AdminRoute: React.FC<Props> = ({ children }) => {
     const navigate = useNavigate()
     const token = localStorage.getItem("access_token")
-    const { isLoading, error, fetchData } = useFetchData<{ isAdmin: boolean }>(`${BACKEND_API_URL}/auth/admin/check-admin`, "GET", token)
-
-    if (!token || error) {
-        navigate("/login-admin")
-        return null
-    }
+    const { isLoading, fetchData } = useFetchData<{ isAdmin: boolean }>(`${BACKEND_API_URL}/auth/admin/check-admin`, "GET", token)
 
     useEffect(() => {
         const checkAdmin = async () => {
