@@ -100,6 +100,16 @@
     font-weight: 700;
 }
 
+.instagramLinkFooter {
+    color: grey;
+    text-decoration: none;
+    transition: all .2s ease;
+}
+
+.instagramLinkFooter:hover {
+    font-weight: 600;
+}
+
 @media (max-width: 900px) {
     .footerContent {
         flex-direction: column;

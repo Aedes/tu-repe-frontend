@@ -34,9 +34,14 @@ const Footer = () => {
                                 height={20}
                                 fill="#0077b6"
                             />
-                            <p>
+                            <a
+                                className="instagramLinkFooter"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                href={`https://instagram.com/aedes.tech`}
+                            >
                                 aedes.tech
-                            </p>
+                            </a>
                         </div>
                         <div className="network">
                             <MailIcon
