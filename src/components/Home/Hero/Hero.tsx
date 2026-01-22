@@ -58,7 +58,6 @@ const Hero = () => {
                             placeholder="Escribí el nombre del club o complejo..."
                             value={searchTerm}
                             onChange={(e) => {
-                                if (clubs.length === 0) return;
                                 setSearchTerm(e.target.value)
                             }}
                         />
@@ -77,7 +76,7 @@ const Hero = () => {
                                     onClick={() => navigate("/c/" + club.id)}
                                 >
                                     <div className="logoClubContainer">
-                                        <img className="searchLogoImg" src={club.profileImageUrl ? club.profileImageUrl : DEFAULT_PROFILE_IMAGE_URL} alt="" />
+                                        <img className="searchLogoImg" src={club.profileImageUrl ? club.profileImageUrl : DEFAULT_PROFILE_IMAGE_URL} alt="Logo del club" />
                                         <p className="searchClubName">{club.name}</p>
                                     </div>
                                     <p className="searchLocation">{club.city}, {club.address}</p>
