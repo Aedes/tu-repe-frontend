@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import "./ClubProfile.css"
 import { useFetchData } from "../../hooks/useFetchData";
 import type { IClub, ICourt } from "../../types";
-import { BACKEND_API_URL, DEFAUL_COVER_IMAGE_URL, DEFAUL_PROFILE_IMAGE_URL } from "../../config";
+import { BACKEND_API_URL, DEFAULT_COVER_IMAGE_URL, DEFAULT_PROFILE_IMAGE_URL } from "../../config";
 import { useEffect, useState } from "react";
 import { PlayIcon, SearchIcon, PinIcon, PhoneIcon, InstagramIcon, NoVideoIcon } from "../../assets/Icons";
 import Button from "../common/Button/Button";
@@ -82,7 +82,7 @@ const ClubProfile = () => {
                 style={{
                     backgroundImage: club?.coverImageUrl
                         ? `url(${club.coverImageUrl})`
-                        : `url("${DEFAUL_COVER_IMAGE_URL}")`,
+                        : `url("${DEFAULT_COVER_IMAGE_URL}")`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                     backgroundRepeat: "no-repeat"
@@ -93,7 +93,7 @@ const ClubProfile = () => {
                 <div className="clubProfileLogoAndName">
                     <div className="clubProfileLogoAndNameContainer">
                         <div className="clubProfileLogo">
-                            <img className="clubLogoImg" src={club?.profileImageUrl ? club.profileImageUrl : DEFAUL_PROFILE_IMAGE_URL} alt={`Logo Club ${club?.name}`} />
+                            <img className="clubLogoImg" src={club?.profileImageUrl ? club.profileImageUrl : DEFAULT_PROFILE_IMAGE_URL} alt={`Logo Club ${club?.name}`} />
                         </div>
                         <div className="clubProfileNameAndLocation">
                             <h1>{club?.name}</h1>

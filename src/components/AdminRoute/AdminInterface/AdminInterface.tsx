@@ -6,7 +6,7 @@ import Button from "../../common/Button/Button";
 import { useEffect, useState } from "react";
 import { useFetchData } from "../../../hooks/useFetchData";
 import type { ClubWithCourts, IClub } from "../../../types";
-import { BACKEND_API_URL, DEFAUL_COVER_IMAGE_URL, DEFAUL_PROFILE_IMAGE_URL } from "../../../config";
+import { BACKEND_API_URL, DEFAULT_COVER_IMAGE_URL, DEFAULT_PROFILE_IMAGE_URL } from "../../../config";
 import { toast } from "sonner";
 import ModalForm from "../../common/ModalForm/ModalForm";
 import Modal from "../../common/Modal/Modal";
@@ -201,7 +201,7 @@ const AdminInterface = () => {
                                             clubs.map(c => {
                                                 return <tr key={c.id}>
                                                     <td className="clubNameCell">
-                                                        <img className="logoClubTable" src={c.profileImageUrl ? c.profileImageUrl : DEFAUL_PROFILE_IMAGE_URL} alt="Logo del club" />
+                                                        <img className="logoClubTable" src={c.profileImageUrl ? c.profileImageUrl : DEFAULT_PROFILE_IMAGE_URL} alt="Logo del club" />
                                                         {c.name}
                                                     </td>
                                                     <td className="clubLocationCell">
@@ -264,7 +264,7 @@ const AdminInterface = () => {
                                     style={{
                                         backgroundImage: clubSelected?.coverImageUrl
                                             ? `url(${clubSelected.coverImageUrl})`
-                                            : `url("${DEFAUL_COVER_IMAGE_URL}")`,
+                                            : `url("${DEFAULT_COVER_IMAGE_URL}")`,
                                         backgroundSize: "cover",
                                         backgroundPosition: "center",
                                         backgroundRepeat: "no-repeat"
@@ -307,7 +307,7 @@ const AdminInterface = () => {
                                 <div className="profileImageInnerContainer">
                                     <div className="profileImageWrapper">
                                         <img
-                                            src={clubSelected.profileImageUrl ? clubSelected.profileImageUrl : DEFAUL_PROFILE_IMAGE_URL}
+                                            src={clubSelected.profileImageUrl ? clubSelected.profileImageUrl : DEFAULT_PROFILE_IMAGE_URL}
                                             alt="Logo del club"
                                             className="profileImage"
                                         />

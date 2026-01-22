@@ -3,7 +3,7 @@ import Button from "../../common/Button/Button";
 import { SearchIcon, CameraIcon } from "../../../assets/Icons";
 import { useFetchData } from "../../../hooks/useFetchData";
 import type { IClub } from "../../../types";
-import { BACKEND_API_URL, DEFAUL_PROFILE_IMAGE_URL } from "../../../config";
+import { BACKEND_API_URL, DEFAULT_PROFILE_IMAGE_URL } from "../../../config";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -77,7 +77,7 @@ const Hero = () => {
                                     onClick={() => navigate("/c/" + club.id)}
                                 >
                                     <div className="logoClubContainer">
-                                        <img className="searchLogoImg" src={club.profileImageUrl ? club.profileImageUrl : DEFAUL_PROFILE_IMAGE_URL} alt="" />
+                                        <img className="searchLogoImg" src={club.profileImageUrl ? club.profileImageUrl : DEFAULT_PROFILE_IMAGE_URL} alt="" />
                                         <p className="searchClubName">{club.name}</p>
                                     </div>
                                     <p className="searchLocation">{club.city}, {club.address}</p>
