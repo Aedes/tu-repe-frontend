@@ -101,6 +101,8 @@
 
 .clubItem {
     background-color: transparent;
+    text-align: start;
+    gap: .5rem;
     border: none;
     width: 100%;
     padding: 0.75rem 1rem;
@@ -139,6 +141,7 @@
 .searchLocation {
     font-size: .8rem;
     color: grey;
+    text-align: right;
 }
 
 @media (max-width: 800px) {
@@ -180,5 +183,9 @@
 
     .heroDescription {
         font-size: 1rem;
+    }
+
+    .clubSearchResults {
+        width: calc(100% - 2rem);
     }
 }
