@@ -15,7 +15,7 @@ const AdminRoute: React.FC<Props> = ({ children }) => {
     useEffect(() => {
         const checkAdmin = async () => {
             const response = await fetchData()
-            if (!response.isAdmin) {
+            if (!response) {
                 navigate("/login-admin")
             }
         }
