@@ -24,6 +24,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 1rem;
 }
 
 .adminInterfaceTitle h1 {
@@ -118,4 +119,249 @@
 
 .viewDetailsButton:hover {
     background-color: var(--azul-oscuro);
+}
+
+.clubDetailsContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: start;
+    padding: 0 1rem;
+    max-height: 80vh;
+}
+
+.clubDetails {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.clubDetailsTitle {
+    color: black;
+    font-weight: 600;
+}
+
+.coverImageContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.coverImageContainer h3 {
+    color: black;
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+
+.coverImageWrapper {
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.coverImage {
+    width: 100%;
+    object-fit: cover;
+}
+
+.customFileUpload {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid grey;
+    color: black;
+    font-weight: 500;
+    font-size: 1rem;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all .2s ease;
+}
+
+.customFileUpload:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.buttonsCoverImageContainer {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    justify-content: space-between;
+}
+
+.profileImage {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profileImageInnerContainer {
+    display: flex;
+    gap: 2rem;
+    align-items: start;
+    margin-top: 1rem;
+}
+
+.profileImageContainer h3 {
+    color: black;
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+
+.buttonsProfileImageContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 1rem;
+}
+
+.pCoverImageContainer {
+    width: 50%;
+    color: grey;
+}
+
+.buttonsCoverImageInnerContainer,
+.buttonsProfileImageInnerContainer {
+    display: flex;
+    gap: 10px;
+}
+
+.pProfilaImageContainer {
+    color: grey;
+}
+
+.clubInfoContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.divInputClubInfo {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.divInputClubInfo label {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: black;
+}
+
+.divInputClubInfo input,
+.divInputClubInfo textarea {
+    padding: 0.5rem;
+    border: 1px solid lightgrey;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    transition: all .2s ease;
+}
+
+.divInputClubInfo input:focus {
+    border-color: var(--azul-claro);
+}
+
+.divInputClubInfoRow {
+    display: flex;
+    gap: 1rem;
+}
+
+.clubDetailsActions {
+    width: 100%;
+    display: flex;
+    gap: 1rem;
+    margin-top: .5rem;
+    margin-bottom: 2rem;
+    justify-content: end;
+}
+
+@media (max-width: 800px) {
+    .listOfClubsTableContainer {
+        overflow-x: auto;
+    }
+
+    .listOfClubsTable {
+        min-width: 700px;
+    }
+
+    .coverImageWrapper {
+        height: 200px;
+    }
+
+    .buttonsCoverImageInnerContainer {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 660px) {
+    .adminInterfaceTitle h1 {
+        font-size: 1.5rem;
+    }
+
+    .adminInterfaceTitle p {
+        font-size: 1rem;
+    }
+
+    .listOfClubsTitle {
+        font-size: 1.2rem;
+    }
+
+    .clubDetailsContainer {
+        padding: 0;
+    }
+
+}
+
+@media (max-width: 550px) {
+    .divInputClubInfoRow {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 510px) {
+    .adminInterfaceTitle {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .adminInterfaceStats {
+        flex-direction: column;
+    }
+
+    .buttonsCoverImageContainer {
+        flex-direction: column;
+    }
+
+    .pCoverImageContainer {
+        width: 100%;
+    }
+
+    .buttonsCoverImageInnerContainer {
+        flex-direction: row;
+        width: 100%;
+    }
+
+    .profileImageInnerContainer {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .customFileUpload {
+        width: 100%;
+    }
 }

@@ -15,7 +15,9 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #fff;
-    width: 400px;
+    max-width: 400px;
+    width: 100%;
+    margin: 2rem;
 }
 
 .loginAdminTitle {
@@ -27,7 +29,6 @@
 .loginAdminForm {
     width: 100%;
 }
-
 
 .loginAdminField {
     margin-bottom: 1.5rem;
@@ -52,4 +53,20 @@
     color: #0f2345;
     transition: border-color 0.3s;
     background-color: #f4fafd;
+}
+
+@media (max-width: 360px) {
+    .loginAdminPanel {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+
+    .loginAdminTitle {
+        font-size: 1.5rem;
+    }
+
+    .loginAdminInput {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+    }
 }

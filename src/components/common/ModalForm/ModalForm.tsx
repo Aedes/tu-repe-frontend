@@ -33,7 +33,7 @@ const ModalForm: React.FC<Props> = ({ isOpen, title, inputs, initialData, onSubm
     return (
         <Modal isOpen={isOpen}>
             <div className="modalFormContainer">
-                <div>
+                <div className="modalFormHeader">
                     <h2 className="modalFormTitle">{title}</h2>
                     {subtitle && <p className="modalSubtitle">{subtitle}</p>}
                 </div>
