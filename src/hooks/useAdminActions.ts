@@ -42,7 +42,6 @@ export const useAdminActions = () => {
         isClubDataChanged
     } = useAdminStore();
 
-    // Hooks para fetch de clubes
     const { isLoading: isLoadingClubsFetch, error: errorClubsFetch, fetchData: fetchDataClubs } =
         useFetchData<typeof clubs>("GET");
 
@@ -67,7 +66,6 @@ export const useAdminActions = () => {
     const { isLoading: isLoadingDeleteCoverFetch, fetchData: fetchDataDeleteCover } =
         useFetchData<ClubWithCourts>("DELETE", token);
 
-    // Hooks para fetch de canchas
     const { isLoading: isLoadingPostCourtFetch, fetchData: fetchDataPostCourt } =
         useFetchData<ICourt>("POST", token);
 
@@ -77,7 +75,6 @@ export const useAdminActions = () => {
     const { isLoading: isLoadingDeleteCourtFetch, fetchData: fetchDataDeleteCourt } =
         useFetchData<ICourt>("DELETE", token);
 
-    // Sincronizar estados de carga
     useEffect(() => {
         setIsLoadingClubs(isLoadingClubsFetch);
     }, [isLoadingClubsFetch, setIsLoadingClubs]);
@@ -122,7 +119,6 @@ export const useAdminActions = () => {
         setIsLoadingDeleteCourt(isLoadingDeleteCourtFetch);
     }, [isLoadingDeleteCourtFetch, setIsLoadingDeleteCourt]);
 
-    // Sincronizar errores
     useEffect(() => {
         setErrorClubs(errorClubsFetch);
         if (errorClubsFetch) {
@@ -139,7 +135,6 @@ export const useAdminActions = () => {
         }
     }, [errorPostClubFetch, setErrorPostClub]);
 
-    // Cargar clubes al montar
     useEffect(() => {
         const fetchClubsAndCourts = async () => {
             const clubsData = await fetchDataClubs(`${BACKEND_API_URL}/clubs/with-courts`);
@@ -148,10 +143,8 @@ export const useAdminActions = () => {
             }
         };
         fetchClubsAndCourts();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // Acciones de clubes
     const handleCreateClub = async (data: { [key: string]: any }) => {
         const newClub = await fetchDataPostClub(`${BACKEND_API_URL}/clubs`, data);
         if (newClub) {
@@ -243,7 +236,6 @@ export const useAdminActions = () => {
         toast.error("Error al eliminar la portada. Por favor, intente nuevamente.");
     };
 
-    // Acciones de canchas
     const handleSubmitCourtForm = async () => {
         if (!selectedClub) return false;
 
@@ -281,7 +273,6 @@ export const useAdminActions = () => {
     };
 
     return {
-        // Estados
         clubs,
         selectedClub,
         editedClubData,
@@ -293,7 +284,6 @@ export const useAdminActions = () => {
         isOpenClubDetails,
         isOpenCourtForm,
 
-        // Acciones de clubes
         handleCreateClub,
         handleUpdateClub,
         handleDeleteClub,
@@ -304,11 +294,9 @@ export const useAdminActions = () => {
         setSelectedClub,
         setEditedClubData,
 
-        // Acciones de canchas
         handleSubmitCourtForm,
         handleDeleteCourt,
 
-        // Acciones de UI (del store)
         setIsOpenForm: useAdminStore.getState().setIsOpenForm,
         setIsOpenClubDetails: useAdminStore.getState().setIsOpenClubDetails,
         setIsOpenCourtForm: useAdminStore.getState().setIsOpenCourtForm,
