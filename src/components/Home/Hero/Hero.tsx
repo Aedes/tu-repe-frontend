@@ -10,14 +10,14 @@ import { toast } from "sonner";
 import { openWhatsappTuRepe } from "../../../openWhatsAppTuRepe";
 
 const Hero = () => {
-    const { error, fetchData } = useFetchData<IClub[]>(`${BACKEND_API_URL}/clubs`, "GET")
+    const { error, fetchData } = useFetchData<IClub[]>("GET")
     const [clubs, setClubs] = useState<IClub[]>([])
     const [searchTerm, setSearchTerm] = useState("")
     const navigate = useNavigate()
 
     useEffect(() => {
         const fetchClubs = async () => {
-            const data = await fetchData()
+            const data = await fetchData(`${BACKEND_API_URL}/clubs`)
             setClubs(data)
         }
 
