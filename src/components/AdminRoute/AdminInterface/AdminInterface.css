@@ -290,6 +290,195 @@
     justify-content: end;
 }
 
+.courtsManagementContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
+
+.courtsManagementHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.courtsManagementHeader h3 {
+    color: black;
+    font-weight: 500;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.courtsManagementHeader button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.courtsList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.courtCard {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+.courtCard:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-color: var(--azul-claro);
+}
+
+.courtCardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.courtCardTitle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.courtCardTitle h4 {
+    margin: 0;
+    color: black;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.courtCardActions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.courtFormActions {
+    width: 100%;
+    display: flex;
+    gap: 1rem;
+    margin-top: .5rem;
+    justify-content: end;
+}
+
+.editCourtButton,
+.deleteCourtButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.4rem 0.6rem;
+    border-radius: 5px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.editCourtButton {
+    color: #0077b6;
+}
+
+.editCourtButton:hover {
+    background-color: #e3f2fd;
+}
+
+.deleteCourtButton {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.deleteCourtButton:hover {
+    background-color: #ffeaea;
+}
+
+.courtCardDetails {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+}
+
+.courtDetailItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.courtDetailLabel {
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.courtDetailValue {
+    font-size: 0.95rem;
+    color: black;
+    word-break: break-word;
+}
+
+.noCourtsMessage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    text-align: center;
+    color: #6c757d;
+}
+
+.noCourtsMessage p {
+    margin: 1rem 0 0.5rem 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.noCourtsSubtext {
+    font-size: 0.9rem !important;
+    color: #adb5bd !important;
+    margin-top: 0 !important;
+}
+
+.courtFormContainer {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: start;
+    padding: 0 1rem;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.courtFormTitle {
+    color: black;
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.courtForm {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
 @media (max-width: 800px) {
     .listOfClubsTableContainer {
         overflow-x: auto;
@@ -363,5 +552,33 @@
 
     .customFileUpload {
         width: 100%;
+    }
+
+    .courtsManagementContainer {
+        padding: 1rem;
+    }
+
+    .courtsManagementHeader {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .courtsManagementHeader button {
+        width: 100%;
+    }
+
+    .courtCardDetails {
+        grid-template-columns: 1fr;
+    }
+
+    .courtCardHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .courtCardActions {
+        width: 100%;
+        justify-content: flex-end;
     }
 }

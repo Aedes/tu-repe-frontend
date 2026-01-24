@@ -82,3 +82,15 @@ body.modal-open {
 .modalCloseButton:hover {
     color: #000;
 }
+
+.modalCloseButton {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: #666;
+    cursor: pointer;
+    transition: color 0.2s;
+}

@@ -21,7 +21,10 @@ export interface ICourt {
     id?: number;
     clubId: number;
     name: string;
-    rtspUrl: string;
+    cameraHost: string;
+    cameraPort: number;
+    cameraPath: string;
+    rtspUsername: string;
 }
 
 export interface IVideo {

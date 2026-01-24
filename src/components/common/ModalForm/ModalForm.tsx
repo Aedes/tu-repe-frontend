@@ -31,7 +31,7 @@ const ModalForm: React.FC<Props> = ({ isOpen, title, inputs, initialData, onSubm
     }
 
     return (
-        <Modal isOpen={isOpen}>
+        <Modal isOpen={isOpen} setIsOpen={handleCloseForm}>
             <div className="modalFormContainer">
                 <div className="modalFormHeader">
                     <h2 className="modalFormTitle">{title}</h2>

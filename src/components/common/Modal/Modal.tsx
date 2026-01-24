@@ -4,9 +4,10 @@ import { useState, useEffect } from "react"
 interface Props {
     isOpen: boolean
     children: React.ReactNode
+    setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const Modal: React.FC<Props> = ({ isOpen, children }) => {
+const Modal: React.FC<Props> = ({ isOpen, children, setIsOpen }) => {
     const [shouldRender, setShouldRender] = useState(isOpen);
     const [closing, setClosing] = useState(false);
 
@@ -33,6 +34,19 @@ const Modal: React.FC<Props> = ({ isOpen, children }) => {
     return (
         <div className={`modalOverlay ${closing ? "closing" : "opening"}`}>
             <div className="modalContent">
+                {
+                    setIsOpen && (
+                        <button
+                            className="modalCloseButton"
+                            aria-label="Cerrar"
+                            onClick={() => {
+                                setIsOpen(false)
+                            }}
+                        >
+                            &times;
+                        </button>
+                    )
+                }
                 <div className="modalBody">
                     {children}
                 </div>
