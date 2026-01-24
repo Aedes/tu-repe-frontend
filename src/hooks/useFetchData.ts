@@ -3,14 +3,13 @@ import { useState } from "react";
 type FetchMethod = "GET" | "POST" | "PUT" | "DELETE";
 
 export const useFetchData = <TResponse, TBody = unknown>(
-    url: string,
     method: FetchMethod,
     token?: string | null
 ) => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
 
-    const fetchData = async (body?: TBody): Promise<TResponse> => {
+    const fetchData = async (url: string, body?: TBody): Promise<TResponse> => {
         setIsLoading(true);
         try {
             const headers: HeadersInit = {};

@@ -21,7 +21,7 @@ const MatchVideoPlayer: React.FC<Props> = ({ videos }) => {
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const chunks = useRef<Blob[]>([]);
     const MAX_DURATION = 30_000;
-    const { isLoading: isProcessingClip, error, fetchData } = useFetchData<Blob>(`${BACKEND_API_URL}/clips/convert`, "POST")
+    const { isLoading: isProcessingClip, error, fetchData } = useFetchData<Blob>("POST")
 
     if (error) {
         console.error(error)
@@ -153,7 +153,7 @@ const MatchVideoPlayer: React.FC<Props> = ({ videos }) => {
         const formData = new FormData();
         formData.append("clip", file);
 
-        const mp4Blob = await fetchData(formData)
+        const mp4Blob = await fetchData(`${BACKEND_API_URL}/clips/convert`, formData)
 
         const url = URL.createObjectURL(mp4Blob);
 

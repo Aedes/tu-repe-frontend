@@ -9,7 +9,7 @@ import { toast } from "sonner";
 const LoginAdmin = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const { isLoading, fetchData } = useFetchData<{ token: string }>(`${BACKEND_API_URL}/auth/admin/login`, "POST");
+    const { isLoading, fetchData } = useFetchData<{ token: string }>("POST");
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -17,7 +17,7 @@ const LoginAdmin = () => {
             toast.error("Por favor, complete todos los campos.");
             return;
         }
-        const response = await fetchData({ email, password });
+        const response = await fetchData(`${BACKEND_API_URL}/auth/admin/login`, { email, password });
 
         if (!response) {
             toast.error("Credenciales inválidas. Por favor, intente nuevamente.");

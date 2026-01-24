@@ -12,8 +12,8 @@ import { toast } from "sonner";
 
 const ClubProfile = () => {
     const { clubId } = useParams();
-    const { isLoading, error, fetchData } = useFetchData<IClub>(`${BACKEND_API_URL}/clubs/c/${clubId}`, "GET")
-    const { isLoading: isLoadingCourts, error: errorCourts, fetchData: fetchDataCourts } = useFetchData<ICourt[]>(`${BACKEND_API_URL}/courts/cl/${clubId}`, "GET")
+    const { isLoading, error, fetchData } = useFetchData<IClub>("GET")
+    const { isLoading: isLoadingCourts, error: errorCourts, fetchData: fetchDataCourts } = useFetchData<ICourt[]>("GET")
     const [club, setClub] = useState<IClub | null>(null)
     const [courts, setCourts] = useState<ICourt[]>([])
     const [day, setDay] = useState<string>("")
@@ -21,12 +21,12 @@ const ClubProfile = () => {
     const [courtId, setCourtId] = useState<string>("")
     const [videos, setVideos] = useState<string[] | null>(null)
     const navigate = useNavigate()
-    const { isLoading: isLoadingVideos, error: errorFetchVideos, fetchData: fetchDataVideos } = useFetchData<string[]>(`${BACKEND_API_URL}/videos/urls?startTime=${day}T${hour}:00Z&courtId=${courtId}`, "GET")
+    const { isLoading: isLoadingVideos, error: errorFetchVideos, fetchData: fetchDataVideos } = useFetchData<string[]>("GET")
 
     useEffect(() => {
         const fetchClubAndCourts = async () => {
-            const dataClub = await fetchData()
-            const dataCourts = await fetchDataCourts()
+            const dataClub = await fetchData(`${BACKEND_API_URL}/clubs/c/${clubId}`)
+            const dataCourts = await fetchDataCourts(`${BACKEND_API_URL}/courts/cl/${clubId}`)
             setClub(dataClub)
             setCourts(dataCourts)
         }
@@ -35,7 +35,7 @@ const ClubProfile = () => {
     }, [])
 
     const fetchVideos = async () => {
-        const dataVideos = await fetchDataVideos()
+        const dataVideos = await fetchDataVideos(`${BACKEND_API_URL}/videos/urls?startTime=${day}T${hour}:00Z&courtId=${courtId}`)
         setVideos(dataVideos)
         if (dataVideos && dataVideos.length > 0) {
             setTimeout(() => {
