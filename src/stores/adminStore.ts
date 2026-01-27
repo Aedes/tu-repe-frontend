@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { ClubWithCourts, IClub, ICourt } from '../types';
+import type { ClubWithCourts, IClub, ICourt, IUser, UserWithClubs } from '../types';
 
 interface AdminState {
     clubs: ClubWithCourts[];
@@ -10,9 +10,15 @@ interface AdminState {
     courtToEdit: ICourt | null;
     courtFormData: Partial<ICourt & { rtspPassword: string }>;
 
+    users: UserWithClubs[]
+    userSelected: UserWithClubs | null
+    editedUserData: UserWithClubs | null
+
     isOpenForm: boolean;
     isOpenClubDetails: boolean;
     isOpenCourtForm: boolean;
+    isOpenUserForm: boolean;
+    isOpenUserDetailsForm: boolean;
 
     isLoadingClubs: boolean;
     isLoadingPostClub: boolean;
@@ -25,6 +31,10 @@ interface AdminState {
     isLoadingPostCourt: boolean;
     isLoadingUpdateCourt: boolean;
     isLoadingDeleteCourt: boolean;
+    isLoadingPostUser: boolean;
+    isLoadingGetUsers: boolean
+    isLoadingUpdateUser: boolean
+    isLoadingDeleteUser: boolean;
 
     errorClubs: Error | null;
     errorPostClub: Error | null;
@@ -45,9 +55,20 @@ interface AdminState {
     setCourtFormData: (data: Partial<ICourt & { rtspPassword: string }>) => void;
     resetCourtFormData: () => void;
 
+    setUsers: (users: UserWithClubs[]) => void
+    addUser: (user: IUser) => void
+    updateUser: (user: IUser) => void
+    deleteUser: (userId: number) => void;
+    addClubTouser: (club: IClub, userId: number) => void
+    removeClubFromUser: (clubId: number, userId: number) => void
+    setSelectedUser: (user: UserWithClubs | null) => void
+    setEditedUserData: (data: IUser | null) => void
+
     setIsOpenForm: (isOpen: boolean) => void;
     setIsOpenClubDetails: (isOpen: boolean) => void;
     setIsOpenCourtForm: (isOpen: boolean) => void;
+    setIsOpenUserForm: (isOpen: boolean) => void;
+    setIsOpenUserDetailsForm: (isOpen: boolean) => void;
 
     setIsLoadingClubs: (isLoading: boolean) => void;
     setIsLoadingPostClub: (isLoading: boolean) => void;
@@ -60,12 +81,18 @@ interface AdminState {
     setIsLoadingPostCourt: (isLoading: boolean) => void;
     setIsLoadingUpdateCourt: (isLoading: boolean) => void;
     setIsLoadingDeleteCourt: (isLoading: boolean) => void;
+    setIsLoadingPostUser: (isLoading: boolean) => void;
+    setIsLoadingGetUsers: (isLoading: boolean) => void;
+    setIsLoadingUpdateUser: (isLoading: boolean) => void;
+    setIsLoadingDeleteUser: (isLoading: boolean) => void;
 
     setErrorClubs: (error: Error | null) => void;
     setErrorPostClub: (error: Error | null) => void;
 
     isClubDataChanged: () => boolean;
+    isUserDataChanged: () => boolean;
     resetSelectedClub: () => void;
+    resetSelectedUser: () => void;
 }
 
 const initialCourtFormData: Partial<ICourt & { rtspPassword: string }> = {
@@ -84,9 +111,14 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     courts: [],
     courtToEdit: null,
     courtFormData: initialCourtFormData,
+    users: [],
+    userSelected: null,
+    editedUserData: null,
     isOpenForm: false,
     isOpenClubDetails: false,
     isOpenCourtForm: false,
+    isOpenUserForm: false,
+    isOpenUserDetailsForm: false,
     isLoadingClubs: false,
     isLoadingPostClub: false,
     isLoadingUpdateClub: false,
@@ -98,6 +130,10 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     isLoadingPostCourt: false,
     isLoadingUpdateCourt: false,
     isLoadingDeleteCourt: false,
+    isLoadingPostUser: false,
+    isLoadingGetUsers: false,
+    isLoadingUpdateUser: false,
+    isLoadingDeleteUser: false,
     errorClubs: null,
     errorPostClub: null,
 
@@ -206,9 +242,68 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     })),
     resetCourtFormData: () => set({ courtFormData: initialCourtFormData }),
 
+    setUsers: (users) => set({ users }),
+    addUser: (user) => set((state) => ({
+        users: [...state.users, { ...user, clubs: [] }]
+    })),
+    updateUser: (user) => {
+        const state = get();
+        const updatedUsers = state.users.map(u => u.id === user.id ? { ...u, ...user } : u);
+        set({
+            users: updatedUsers,
+            userSelected: state.userSelected?.id === user.id
+                ? { ...state.userSelected, ...user }
+                : state.userSelected,
+            editedUserData: state.editedUserData?.id === user.id
+                ? { ...state.editedUserData, ...user }
+                : state.editedUserData
+        });
+    },
+    addClubTouser: (club: IClub, userId: number) => {
+        const state = get();
+        const updatedUsers = state.users.map(u => u.id === userId ? { ...u, clubs: [...u.clubs!, club] } : u)
+        set({
+            users: updatedUsers,
+            userSelected: state.userSelected?.id === userId
+                ? { ...state.userSelected, clubs: [...state.userSelected.clubs!, club] }
+                : state.userSelected,
+        });
+
+    },
+    removeClubFromUser: (clubId: number, userId: number) => {
+        const state = get();
+        const updatedUsers = state.users.map(u =>
+            u.id === userId
+                ? { ...u, clubs: u.clubs ? u.clubs.filter(c => c.id !== clubId) : [] }
+                : u
+        );
+        set({
+            users: updatedUsers,
+            userSelected: state.userSelected?.id === userId
+                ? {
+                    ...state.userSelected,
+                    clubs: state.userSelected.clubs ? state.userSelected.clubs.filter(c => c.id !== clubId) : []
+                }
+                : state.userSelected,
+        });
+    },
+    deleteUser: (userId) => set((state) => ({
+        users: state.users.filter(u => u.id !== userId),
+        userSelected: state.userSelected?.id === userId ? null : state.userSelected,
+        editedUserData: state.editedUserData?.id === userId ? null : state.editedUserData
+    })),
+    setSelectedUser: (user) => set({
+        userSelected: user,
+        editedUserData: user ? { ...user } : null,
+    }),
+    setEditedUserData: (data) => set({ editedUserData: data }),
+
+
     setIsOpenForm: (isOpen) => set({ isOpenForm: isOpen }),
     setIsOpenClubDetails: (isOpen) => set({ isOpenClubDetails: isOpen }),
     setIsOpenCourtForm: (isOpen) => set({ isOpenCourtForm: isOpen }),
+    setIsOpenUserForm: (isOpen) => set({ isOpenUserForm: isOpen }),
+    setIsOpenUserDetailsForm: (isOpen) => set({ isOpenUserDetailsForm: isOpen }),
 
     setIsLoadingClubs: (isLoading) => set({ isLoadingClubs: isLoading }),
     setIsLoadingPostClub: (isLoading) => set({ isLoadingPostClub: isLoading }),
@@ -221,6 +316,10 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     setIsLoadingPostCourt: (isLoading) => set({ isLoadingPostCourt: isLoading }),
     setIsLoadingUpdateCourt: (isLoading) => set({ isLoadingUpdateCourt: isLoading }),
     setIsLoadingDeleteCourt: (isLoading) => set({ isLoadingDeleteCourt: isLoading }),
+    setIsLoadingPostUser: (isLoading) => set({ isLoadingPostUser: isLoading }),
+    setIsLoadingGetUsers: (isLoading) => set({ isLoadingGetUsers: isLoading }),
+    setIsLoadingUpdateUser: (isLoading) => set({ isLoadingUpdateUser: isLoading }),
+    setIsLoadingDeleteUser: (isLoading) => set({ isLoadingDeleteUser: isLoading }),
 
     setErrorClubs: (error) => set({ errorClubs: error }),
     setErrorPostClub: (error) => set({ errorPostClub: error }),
@@ -234,6 +333,20 @@ export const useAdminStore = create<AdminState>((set, get) => ({
         selectedClub: null,
         editedClubData: null,
         courts: []
+    }),
+    isUserDataChanged: () => {
+        const state = get();
+        if (!state.userSelected || !state.editedUserData) return false;
+        const omitClubs = (user: any) => {
+            if (!user) return user;
+            const { clubs, ...rest } = user;
+            return rest;
+        };
+        return JSON.stringify(omitClubs(state.userSelected)) !== JSON.stringify(omitClubs(state.editedUserData));
+    },
+    resetSelectedUser: () => set({
+        userSelected: null,
+        editedUserData: null,
     })
 }));
 

@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { useFetchData } from '../hooks/useFetchData';
 import { useAdminStore } from '../stores/adminStore';
 import { BACKEND_API_URL } from '../config';
-import type { ClubWithCourts, ICourt } from '../types';
+import type { ClubWithCourts, ICourt, IUser, UserWithClubs } from '../types';
 
 export const useAdminActions = () => {
     const token = localStorage.getItem("access_token");
@@ -14,9 +14,14 @@ export const useAdminActions = () => {
         courts,
         courtToEdit,
         courtFormData,
+        users,
+        userSelected,
+        editedUserData,
         isOpenForm,
         isOpenClubDetails,
         isOpenCourtForm,
+        isOpenUserForm,
+        isOpenUserDetailsForm,
         setClubs,
         addClub,
         updateClub,
@@ -26,6 +31,12 @@ export const useAdminActions = () => {
         addCourt,
         updateCourt,
         deleteCourt,
+        setUsers,
+        addUser,
+        updateUser,
+        deleteUser,
+        setSelectedUser,
+        setEditedUserData,
         setIsLoadingClubs,
         setIsLoadingPostClub,
         setIsLoadingUpdateClub,
@@ -37,9 +48,14 @@ export const useAdminActions = () => {
         setIsLoadingPostCourt,
         setIsLoadingUpdateCourt,
         setIsLoadingDeleteCourt,
+        setIsLoadingPostUser,
+        setIsLoadingGetUsers,
+        setIsLoadingUpdateUser,
+        setIsLoadingDeleteUser,
         setErrorClubs,
         setErrorPostClub,
-        isClubDataChanged
+        isClubDataChanged,
+        isUserDataChanged,
     } = useAdminStore();
 
     const { isLoading: isLoadingClubsFetch, error: errorClubsFetch, fetchData: fetchDataClubs } =
@@ -74,6 +90,18 @@ export const useAdminActions = () => {
 
     const { isLoading: isLoadingDeleteCourtFetch, fetchData: fetchDataDeleteCourt } =
         useFetchData<ICourt>("DELETE", token);
+
+    const { isLoading: isLoadingPostUserFetch, fetchData: fetchDataPostUser } =
+        useFetchData<IUser>("POST", token);
+
+    const { isLoading: isLoadingGetUsersFetch, fetchData: fetchDataGetUsers } =
+        useFetchData<UserWithClubs[]>("GET", token);
+
+    const { isLoading: isLoadingUpdateUserFetch, fetchData: fetchDataUpdateUser } =
+        useFetchData<UserWithClubs>("PUT", token);
+
+    const { isLoading: isLoadingDeleteUserFetch, fetchData: fetchDataDeleteUser } =
+        useFetchData<UserWithClubs>("DELETE", token);
 
     useEffect(() => {
         setIsLoadingClubs(isLoadingClubsFetch);
@@ -120,6 +148,22 @@ export const useAdminActions = () => {
     }, [isLoadingDeleteCourtFetch, setIsLoadingDeleteCourt]);
 
     useEffect(() => {
+        setIsLoadingPostUser(isLoadingPostUserFetch);
+    }, [isLoadingPostUserFetch, setIsLoadingPostUser]);
+
+    useEffect(() => {
+        setIsLoadingGetUsers(isLoadingGetUsersFetch);
+    }, [isLoadingGetUsersFetch, setIsLoadingGetUsers]);
+
+    useEffect(() => {
+        setIsLoadingUpdateUser(isLoadingUpdateUserFetch);
+    }, [isLoadingUpdateUserFetch, setIsLoadingUpdateUser]);
+
+    useEffect(() => {
+        setIsLoadingDeleteUser(isLoadingDeleteUserFetch);
+    }, [isLoadingDeleteUserFetch, setIsLoadingDeleteUser]);
+
+    useEffect(() => {
         setErrorClubs(errorClubsFetch);
         if (errorClubsFetch) {
             console.error("Error fetching clubs:", errorClubsFetch);
@@ -143,6 +187,16 @@ export const useAdminActions = () => {
             }
         };
         fetchClubsAndCourts();
+    }, []);
+
+    useEffect(() => {
+        const fetchUsersAndClubs = async () => {
+            const usersData = await fetchDataGetUsers(`${BACKEND_API_URL}/users`);
+            if (usersData) {
+                setUsers(usersData);
+            }
+        };
+        fetchUsersAndClubs();
     }, []);
 
     const handleCreateClub = async (data: { [key: string]: any }) => {
@@ -272,6 +326,40 @@ export const useAdminActions = () => {
         return true;
     };
 
+    const handleCreateUser = async (data: { [key: string]: any }) => {
+        const response = await fetchDataPostUser(`${BACKEND_API_URL}/users`, data)
+        if (!response) {
+            toast.error("No se pudo crear el usuario, intente de nuevo.");
+            return false;
+        }
+        addUser(response)
+        toast.success("Usuario creado exitosamente.")
+        return true
+    }
+
+    const handleUpdateUser = async () => {
+        if (!editedUserData) return false;
+        const response = await fetchDataUpdateUser(`${BACKEND_API_URL}/users/u/${userSelected?.id}`, editedUserData);
+        if (response) {
+            updateUser(response);
+            toast.success("Usuario actualizado exitosamente.");
+            return true;
+        }
+        toast.error("Error al actualizar el usuario. Por favor, intente nuevamente.");
+        return false;
+    };
+
+    const handleDeleteUser = async () => {
+        const response = await fetchDataDeleteUser(`${BACKEND_API_URL}/users/u/${userSelected?.id}`);
+        if (response) {
+            deleteUser(userSelected!.id!);
+            toast.success("Usuario eliminado correctamente.");
+            return true;
+        }
+        toast.error("No se pudo eliminar el usuario, intente nuevamente.");
+        return false;
+    };
+
     return {
         clubs,
         selectedClub,
@@ -279,10 +367,16 @@ export const useAdminActions = () => {
         courts,
         courtToEdit,
         courtFormData,
+        users,
+        userSelected,
+        editedUserData,
         isClubDataChanged: isClubDataChanged(),
+        isUserDataChanged: isUserDataChanged(),
         isOpenForm,
         isOpenClubDetails,
         isOpenCourtForm,
+        isOpenUserForm,
+        isOpenUserDetailsForm,
 
         handleCreateClub,
         handleUpdateClub,
@@ -291,8 +385,13 @@ export const useAdminActions = () => {
         handleCoverChange,
         handleDeleteLogo,
         handleDeleteCover,
+        handleCreateUser,
+        handleUpdateUser,
+        handleDeleteUser,
         setSelectedClub,
         setEditedClubData,
+        setEditedUserData,
+        setSelectedUser,
 
         handleSubmitCourtForm,
         handleDeleteCourt,
@@ -300,6 +399,8 @@ export const useAdminActions = () => {
         setIsOpenForm: useAdminStore.getState().setIsOpenForm,
         setIsOpenClubDetails: useAdminStore.getState().setIsOpenClubDetails,
         setIsOpenCourtForm: useAdminStore.getState().setIsOpenCourtForm,
+        setIsOpenUserForm: useAdminStore.getState().setIsOpenUserForm,
+        setIsOpenUserDetailsForm: useAdminStore.getState().setIsOpenUserDetailsForm,
         setCourtToEdit: useAdminStore.getState().setCourtToEdit,
         setCourtFormData: useAdminStore.getState().setCourtFormData,
         resetCourtFormData: useAdminStore.getState().resetCourtFormData,

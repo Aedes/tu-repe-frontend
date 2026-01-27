@@ -50,12 +50,21 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: white;
+    margin-bottom: 2rem;
+    max-height: 400px;
+    overflow-y: auto;
 }
 
 .listOfClubsTitle {
     font-size: 1.5rem;
     color: black;
+}
+
+.listIconAndName {
+    display: flex;
+    align-items: center;
     margin-bottom: 1rem;
+    gap: .5rem;
 }
 
 .listOfClubsTable {
@@ -117,6 +126,11 @@
     transition: background-color 0.3s;
 }
 
+.adminInterfaceActions {
+    display: flex;
+    gap: 1rem;
+}
+
 @media (max-width: 800px) {
     .listOfClubsTableContainer {
         overflow-x: auto;
@@ -133,6 +147,11 @@
     .buttonsCoverImageInnerContainer {
         flex-direction: column;
     }
+
+    .adminInterfaceTitle {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 
 @media (max-width: 660px) {
@@ -148,10 +167,6 @@
         font-size: 1.2rem;
     }
 
-    .clubDetailsContainer {
-        padding: 0;
-    }
-
 }
 
 @media (max-width: 550px) {
@@ -161,11 +176,6 @@
 }
 
 @media (max-width: 510px) {
-    .adminInterfaceTitle {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
     .adminInterfaceStats {
         flex-direction: column;
     }

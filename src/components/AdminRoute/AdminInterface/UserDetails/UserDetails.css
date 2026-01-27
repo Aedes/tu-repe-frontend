@@ -1,0 +1,27 @@
+.headerAssingOwner {
+    position: relative;
+}
+
+.resultsClubsAssingOwner {
+    position: absolute;
+    width: 100%;
+    top: 30px;
+    background-color: white;
+    margin-top: 1rem;
+    max-height: 300px;
+    overflow-y: auto;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .9);
+    border-radius: 0.5rem;
+    animation: fadeIn 0.1s ease-in-out;
+}
+
+.addressDetail {
+    letter-spacing: 0;
+}
+
+@media (max-width: 520px) {
+    .resultsClubsAssingOwner {
+        top: 60px;
+    }
+
+}

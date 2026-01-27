@@ -39,3 +39,14 @@ export interface IVideo {
 export interface ClubWithCourts extends IClub {
     courts: ICourt[];
 }
+
+export interface IUser {
+    id?: number;
+    email: string;
+    passwordHash: string;
+    name: string;
+}
+
+export interface UserWithClubs extends IUser {
+    clubs?: IClub[]
+}

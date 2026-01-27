@@ -1,7 +1,7 @@
 import "./AdminInterface.css"
 import NavBar from "../../common/NavBar/NavBar";
 import StatCard from "./StatCard/StatCard";
-import { CameraIcon, CompanyIcon } from "../../../assets/Icons";
+import { CameraIcon, CompanyIcon, UsersIcon } from "../../../assets/Icons";
 import Button from "../../common/Button/Button";
 import { useAdminActions } from "../../../hooks/useAdminActions";
 import { DEFAULT_PROFILE_IMAGE_URL } from "../../../config";
@@ -11,6 +11,7 @@ import ModalLoading from "../../common/ModalLoading/ModalLoading";
 import ClubDetails from "./ClubDetails/ClubDetails";
 import CourtsForm from "./CourtsForm/CourtsForm";
 import { useAdminStore } from "../../../stores/adminStore";
+import UserDetails from "./UserDetails/UserDetails";
 
 const AdminInterface = () => {
     const {
@@ -22,19 +23,28 @@ const AdminInterface = () => {
         isLoadingDeleteCover,
         isLoadingDeleteCourt,
         isLoadingDeleteClub,
-        isLoadingPostClub
+        isLoadingPostClub,
+        isLoadingPostUser,
+        isLoadingDeleteUser,
     } = useAdminStore()
 
     const {
         clubs,
+        users,
         isOpenForm,
         isOpenClubDetails,
         isOpenCourtForm,
+        isOpenUserForm,
+        isOpenUserDetailsForm,
         handleCreateClub,
+        handleCreateUser,
         setSelectedClub,
+        setSelectedUser,
         setIsOpenForm,
         setIsOpenClubDetails,
         setIsOpenCourtForm,
+        setIsOpenUserForm,
+        setIsOpenUserDetailsForm,
     } = useAdminActions();
 
     const handleOpenClubDetails = (club: typeof clubs[0]) => {
@@ -65,6 +75,18 @@ const AdminInterface = () => {
         }
     };
 
+    const handleCreateUserAndClose = async (data: { [key: string]: any }) => {
+        const success = await handleCreateUser(data);
+        if (success) {
+            setIsOpenUserForm(false);
+        }
+    };
+
+    const handleOpenUserDetails = (user: typeof users[0]) => {
+        setSelectedUser(user);
+        setIsOpenUserDetailsForm(true);
+    };
+
     return (
         <div className="adminInterfaceContainer">
             <NavBar context="club" />
@@ -74,17 +96,30 @@ const AdminInterface = () => {
                         <h1>Hola, Aedes 👋</h1>
                         <p>Bienvenido al panel de administración de Tu Repe</p>
                     </div>
-                    <Button
-                        margin="0"
-                        onClick={() => setIsOpenForm(true)}
-                        fontSize={window.innerWidth < 650 ? "0.9rem" : "1rem"}
-                        padding={window.innerWidth < 650 ? "0.5rem 1rem" : ""}
-                        backgroundColor="rgb(0, 173, 0)"
-                        color="white"
-                        disabled={isLoadingClubs}
-                    >
-                        + Nuevo Club
-                    </Button>
+                    <div className="adminInterfaceActions">
+                        <Button
+                            margin="0"
+                            onClick={() => setIsOpenForm(true)}
+                            fontSize={window.innerWidth < 760 ? "0.9rem" : "1rem"}
+                            padding={window.innerWidth < 760 ? "0.5rem 1rem" : ""}
+                            backgroundColor="rgb(0, 173, 0)"
+                            color="white"
+                            disabled={isLoadingClubs}
+                        >
+                            + Nuevo Club
+                        </Button>
+                        <Button
+                            margin="0"
+                            onClick={() => setIsOpenUserForm(true)}
+                            fontSize={window.innerWidth < 760 ? "0.9rem" : "1rem"}
+                            padding={window.innerWidth < 760 ? "0.5rem 1rem" : ""}
+                            backgroundColor="rgb(0, 173, 0)"
+                            color="white"
+                            disabled={isLoadingPostUser}
+                        >
+                            + Nuevo Usuario
+                        </Button>
+                    </div>
                 </div>
                 {
                     isLoadingClubs ?
@@ -112,9 +147,25 @@ const AdminInterface = () => {
                                     title="Canchas"
                                     quantity={clubs.reduce((acc, club) => acc + club.courts.length, 0)}
                                 />
+                                <StatCard
+                                    icon={<UsersIcon
+                                        width={window.innerWidth < 650 ? 24 : 30}
+                                        height={window.innerWidth < 650 ? 24 : 30}
+                                        fill="#0077b6"
+                                    />}
+                                    title="Dueños"
+                                    quantity={users.length}
+                                />
                             </div>
                             <div className="listOfClubsTableContainer">
-                                <h2 className="listOfClubsTitle">Lista de Clubes</h2>
+                                <div className="listIconAndName">
+                                    <CompanyIcon
+                                        width={20}
+                                        height={20}
+                                        fill="balck"
+                                    />
+                                    <h2 className="listOfClubsTitle">Lista de Clubes</h2>
+                                </div>
                                 <table className="listOfClubsTable">
                                     <thead>
                                         <tr>
@@ -152,6 +203,50 @@ const AdminInterface = () => {
                                     </tbody>
                                 </table>
                             </div>
+                            <div className="listOfClubsTableContainer">
+                                <div className="listIconAndName">
+                                    <UsersIcon
+                                        width={20}
+                                        height={20}
+                                        fill="balck"
+                                    />
+                                    <h2 className="listOfClubsTitle">Lista de Usuarios</h2>
+                                </div>
+                                <table className="listOfClubsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Email</th>
+                                            <th>Clubes</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            users.map(u => {
+                                                return <tr key={u.id}>
+                                                    <td>
+                                                        {u.name}
+                                                    </td>
+                                                    <td>
+                                                        {u.email}
+                                                    </td>
+                                                    <td>{u.clubs?.length}</td>
+                                                    <td>
+                                                        <button
+                                                            className="viewDetailsButton"
+                                                            onClick={() => handleOpenUserDetails(u)}
+                                                        >
+                                                            Ver Detalles
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                            )
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
                         </>
                 }
             </div>
@@ -177,11 +272,28 @@ const AdminInterface = () => {
                 onClose={() => setIsOpenForm(false)}
                 disabledButtons={isLoadingPostClub}
             />
+            <ModalForm
+                isOpen={isOpenUserForm}
+                inputs={[
+                    { label: "Nombre", type: "text", name: "name", placeholder: "Héctor Hugo", required: true },
+                    { label: "Email", type: "text", name: "email", placeholder: "hectorhugo@email.com", required: true },
+                    { label: "Contraseña", type: "text", name: "password", placeholder: "******", required: true },
+                ]}
+                title="Agregar nuevo usuario"
+                subtitle="Los campos con * son obligatorios"
+                initialData={{}}
+                onSubmitForm={(data) => handleCreateUserAndClose(data)}
+                onClose={() => setIsOpenUserForm(false)}
+                disabledButtons={isLoadingPostUser}
+            />
             <Modal isOpen={isOpenClubDetails} setIsOpen={handleCloseClubDetailsModal}>
                 <ClubDetails />
             </Modal>
             <Modal isOpen={isOpenCourtForm} setIsOpen={handleCloseCourtFormModal}>
                 <CourtsForm />
+            </Modal>
+            <Modal isOpen={isOpenUserDetailsForm}>
+                <UserDetails />
             </Modal>
             <ModalLoading
                 text={(isLoadingUploadLogo || isLoadingUploadCover || isLoadingDeleteLogo || isLoadingDeleteCover) ? "Acualizando imágen..." : "Cargando..."}
@@ -192,6 +304,7 @@ const AdminInterface = () => {
                     isLoadingUpdateClub ||
                     isLoadingDeleteCover ||
                     isLoadingDeleteCourt ||
+                    isLoadingDeleteUser ||
                     isLoadingDeleteClub
                 }
             />

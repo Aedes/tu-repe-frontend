@@ -5,7 +5,6 @@ import { DEFAULT_COVER_IMAGE_URL, DEFAULT_PROFILE_IMAGE_URL } from "../../../../
 import { useAdminActions } from "../../../../hooks/useAdminActions";
 
 const ClubDetails = () => {
-
     const {
         courts,
         selectedClub,
