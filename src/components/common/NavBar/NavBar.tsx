@@ -36,6 +36,7 @@ const NavBar: React.FC<{ context: "landing" | "club" }> = ({ context }) => {
                                     <a href="#whatis" className="mobile-link">¿Qué es Tu Repe?</a>
                                     <a href="#personalization" className="mobile-link">Para mi club</a>
                                     <a href="#footer" className="mobile-link">Contacto</a>
+                                    <a href="/user" className="mobile-link">Ingresar</a>
                                 </nav>
                             </div>
                         )}
