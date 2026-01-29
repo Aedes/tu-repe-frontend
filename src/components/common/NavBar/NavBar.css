@@ -124,6 +124,13 @@
 }
 
 
+@media (max-width: 768px) {
+    .navBarLinks {
+        gap: 1rem;
+    }
+}
+
+
 @media (max-width: 560px) {
     .logoImg {
         height: 30px;
@@ -134,7 +141,6 @@
     }
 
     .navBarLinks {
-        gap: 1rem;
         font-size: .8rem;
     }
 }

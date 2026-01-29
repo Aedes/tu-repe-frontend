@@ -6,7 +6,7 @@ import { BACKEND_API_URL } from "../../config";
 import { useState } from "react";
 import { toast } from "sonner";
 
-const LoginAdmin = () => {
+const LoginAdmin = ({ baseUrl }: { baseUrl: "admin" | "user" }) => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const { isLoading, fetchData } = useFetchData<{ token: string }>("POST");
@@ -17,22 +17,22 @@ const LoginAdmin = () => {
             toast.error("Por favor, complete todos los campos.");
             return;
         }
-        const response = await fetchData(`${BACKEND_API_URL}/auth/admin/login`, { email, password });
+        const response = await fetchData(`${BACKEND_API_URL}/auth/${baseUrl}/login`, { email, password });
 
         if (!response) {
             toast.error("Credenciales inválidas. Por favor, intente nuevamente.");
             return;
         }
 
-        localStorage.setItem("access_token", response.token);
-        window.location.href = "/admin";
+        localStorage.setItem(baseUrl === "admin" ? "access_token" : "access_token_user", response.token);
+        window.location.href = `/${baseUrl}`;
     }
 
     return (
         <div className="loginAdminContainer">
             <NavBar context="club" />
             <div className="loginAdminPanel">
-                <h2 className="loginAdminTitle">Panel de Administrador</h2>
+                <h2 className="loginAdminTitle">Panel de {baseUrl === "admin" ? "administrador" : "usuario"}</h2>
                 <form className="loginAdminForm" onSubmit={handleSubmit}>
                     <div className="loginAdminField">
                         <label htmlFor="email">

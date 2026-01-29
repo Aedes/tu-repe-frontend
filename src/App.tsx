@@ -6,6 +6,8 @@ import ClubProfile from './components/ClubProfile/ClubProfile'
 import AdminRoute from './components/AdminRoute/AdminRoute'
 import AdminInterface from './components/AdminRoute/AdminInterface/AdminInterface'
 import LoginAdmin from './components/LoginAdmin/LoginAdmin'
+import UserRoute from './components/UserRoute/UserRoute'
+import UserInterface from './components/UserRoute/UserInterface/UserInterface'
 
 function App() {
   return (
@@ -23,7 +25,15 @@ function App() {
                 </AdminRoute>
               }
             />
-            <Route path='/login-admin' element={<LoginAdmin />} />
+            <Route path='/login-admin' element={<LoginAdmin baseUrl='admin' />} />
+            <Route path='/user'
+              element={
+                <UserRoute >
+                  <UserInterface />
+                </UserRoute>
+              }
+            />
+            <Route path='/login-user' element={<LoginAdmin baseUrl='user' />} />
           </Routes>
         </main>
       </BrowserRouter>

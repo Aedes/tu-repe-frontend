@@ -302,6 +302,20 @@
     }
 }
 
+@media (max-width: 660px) {
+    .clubProfileLogoAndName {
+        margin: 0 1rem;
+    }
+
+    .findYourMatchSection {
+        margin: 2rem 1rem;
+    }
+
+    .matchVideoPlayerContainer {
+        margin: 0 1rem 2rem 1rem;
+    }
+}
+
 @media (max-width: 560px) {
     .clubProfileLogoAndName h1 {
         font-size: 1.7rem;

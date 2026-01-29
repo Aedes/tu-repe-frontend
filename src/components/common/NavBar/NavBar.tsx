@@ -24,7 +24,7 @@ const NavBar: React.FC<{ context: "landing" | "club" }> = ({ context }) => {
                             <li className="navBarLinkItem"><a href="#whatis">¿Qué es Tu Repe?</a></li>
                             <li className="navBarLinkItem"><a href="#personalization">Para mi club</a></li>
                             <li className="navBarLinkItem"><a href="#footer">Contacto</a></li>
-                            <li className="navBarLinkItem"><a href="#footer">Ingresar</a></li>
+                            <li className="navBarLinkItem"><a href="/user">Ingresar</a></li>
                         </ul>
                         <div className="menuButton" onClick={() => setIsMenuOpen(!isMenuOpen)}>
                             {isMenuOpen ? <ExitIcon width={25} height={25} fill="#0077b6" /> : <MenuIcon width={25} height={25} fill="#0077b6" />}
