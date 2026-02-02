@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, type SetStateAction } from "react";
 import "./MatchVideoPlayer.css"
 import Button from "../../common/Button/Button";
 import { DownloadIcon, StartRecordingIcon, StopRecordingIcon, CheckIcon } from "../../../assets/Icons";
@@ -9,11 +9,12 @@ import { useFetchData } from "../../../hooks/useFetchData";
 
 type Props = {
     videos: string[];
+    currentIndex: number;
+    setCurrentIndex: React.Dispatch<SetStateAction<number>>
 };
 
-const MatchVideoPlayer: React.FC<Props> = ({ videos }) => {
+const MatchVideoPlayer: React.FC<Props> = ({ videos, currentIndex, setCurrentIndex }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
-    const [currentIndex, setCurrentIndex] = useState(0);
     const [speed, setSpeed] = useState(1);
     const [isRecording, setIsRecording] = useState(false)
     const [isOpen, setIsOpen] = useState(false)

@@ -22,6 +22,7 @@ const ClubProfile = () => {
     const [videos, setVideos] = useState<string[] | null>(null)
     const navigate = useNavigate()
     const { isLoading: isLoadingVideos, error: errorFetchVideos, fetchData: fetchDataVideos } = useFetchData<string[]>("GET")
+    const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
         const fetchClubAndCourts = async () => {
@@ -34,7 +35,30 @@ const ClubProfile = () => {
         fetchClubAndCourts()
     }, [])
 
+    useEffect(() => {
+        if (!club) return
+
+        const root = document.documentElement
+
+        root.style.setProperty(
+            '--color-primary',
+            club.theme?.primary ?? '#0077b6'
+        )
+
+        root.style.setProperty(
+            '--color-secondary',
+            club.theme?.secondary ?? '#caf0f8'
+        )
+
+        root.style.setProperty(
+            '--color-bg',
+            club.theme?.background ?? '#edfafd'
+        )
+    }, [club])
+
+
     const fetchVideos = async () => {
+        setCurrentIndex(0)
         const dataVideos = await fetchDataVideos(`${BACKEND_API_URL}/videos/urls?startTime=${day}T${hour}:00Z&courtId=${courtId}`)
         setVideos(dataVideos)
         if (dataVideos && dataVideos.length > 0) {
@@ -103,7 +127,7 @@ const ClubProfile = () => {
                                     <PinIcon
                                         width="16"
                                         height="16"
-                                        fill="#a9d703"
+                                        fill={club?.theme?.primary ? club.theme.primary : "#0077b6"}
                                     />
                                     <a className="anchordInstagram" target="_blank" rel="noopener noreferrer" href={`https://www.google.com/maps/search/?api=1&query=${location}`}>{club?.address}, {club?.city}, {club?.province}</a>
                                 </div>
@@ -113,7 +137,7 @@ const ClubProfile = () => {
                                         <InstagramIcon
                                             width="16"
                                             height="16"
-                                            fill="#a9d703"
+                                            fill={club?.theme?.primary ? club.theme.primary : "#0077b6"}
                                         />
                                         <a className="anchordInstagram" target="_blank" rel="noopener noreferrer" href={`https://instagram.com/${club.instagramHandle}`}>{club.instagramHandle}</a>
                                     </div>
@@ -124,7 +148,7 @@ const ClubProfile = () => {
                                         <PhoneIcon
                                             width="16"
                                             height="16"
-                                            fill="#a9d703"
+                                            fill={club?.theme?.primary ? club.theme.primary : "#0077b6"}
                                         />
                                         <p>{club.phone}</p>
                                     </div>
@@ -141,7 +165,7 @@ const ClubProfile = () => {
                             <PinIcon
                                 width="16"
                                 height="16"
-                                fill="#a9d703"
+                                fill={club?.theme?.primary ? club.theme.primary : "#0077b6"}
                             />
                             <a className="anchordInstagram" target="_blank" rel="noopener noreferrer" href={`https://www.google.com/maps/search/?api=1&query=${location}`}>{club?.address}, {club?.city}, {club?.province}</a>
                         </div>
@@ -151,7 +175,7 @@ const ClubProfile = () => {
                                 <InstagramIcon
                                     width="16"
                                     height="16"
-                                    fill="#a9d703"
+                                    fill={club?.theme?.primary ? club.theme.primary : "#0077b6"}
                                 />
                                 <a className="anchordInstagram" target="_blank" rel="noopener noreferrer" href={`https://instagram.com/${club.instagramHandle}`}>{club.instagramHandle}</a>
                             </div>
@@ -162,7 +186,7 @@ const ClubProfile = () => {
                                 <PhoneIcon
                                     width="16"
                                     height="16"
-                                    fill="#a9d703"
+                                    fill={club?.theme?.primary ? club.theme.primary : "#0077b6"}
                                 />
                                 <p>{club.phone}</p>
                             </div>
@@ -179,7 +203,7 @@ const ClubProfile = () => {
                                 <SearchIcon
                                     width="32"
                                     height="32"
-                                    fill="#1c67ba"
+                                    fill={club?.theme?.primary ? club.theme.primary : "#0077b6"}
                                 />
                             </div>
                             <div className="findYourMatchTitleAndDescription">
@@ -241,7 +265,7 @@ const ClubProfile = () => {
                             </select>
                         </div>
                         <div className="filterContainer">
-                            <label htmlFor="filter-hour" style={{ fontWeight: 500 }}>Hora</label>
+                            <label htmlFor="filter-hour" style={{ fontWeight: 500 }}>Hora:</label>
                             <select id="filter-hour" className="filter" onChange={(e) => setHour(e.target.value)}>
                                 <option value="">¿A qué hora?</option>
                                 {(() => {
@@ -261,12 +285,29 @@ const ClubProfile = () => {
                                     const closeMins = timeToMinutes(close);
 
                                     const options = [];
-                                    for (let mins = openMins; mins <= closeMins; mins += 15) {
-                                        const time = minutesToTime(mins);
-                                        options.push(
-                                            <option key={time} value={time}>{time}</option>
-                                        );
+
+                                    if (closeMins > openMins) {
+                                        for (let mins = openMins; mins <= closeMins; mins += 15) {
+                                            const time = minutesToTime(mins);
+                                            options.push(
+                                                <option key={time} value={time}>{time}</option>
+                                            );
+                                        }
+                                    } else {
+                                        for (let mins = openMins; mins < 24 * 60; mins += 15) {
+                                            const time = minutesToTime(mins);
+                                            options.push(
+                                                <option key={time} value={time}>{time}</option>
+                                            );
+                                        }
+                                        for (let mins = 0; mins <= closeMins; mins += 15) {
+                                            const time = minutesToTime(mins);
+                                            options.push(
+                                                <option key={time} value={time}>{time}</option>
+                                            );
+                                        }
                                     }
+
                                     return options;
                                 })()}
                             </select>
@@ -275,7 +316,7 @@ const ClubProfile = () => {
                     <div className="buttonVideoContainer">
                         <Button
                             margin="0"
-                            backgroundColor="#1c67ba"
+                            backgroundColor={club?.theme?.primary ? club.theme.primary : "#0077b6"}
                             color="white"
                             onClick={() => fetchVideos()}
                             disabled={!(courtId && day && hour) || isLoadingVideos}
@@ -315,15 +356,19 @@ const ClubProfile = () => {
                                             <PlayIcon
                                                 width="32"
                                                 height="32"
-                                                fill="#1c67ba"
+                                                fill={club?.theme?.primary ? club.theme.primary : "#0077b6"}
                                             />
                                         </div>
                                         <div>
                                             <h3 className="titleMatchVideoPlayer">Tu partido: </h3>
-                                            <p className="pSlices">Dividido en {videos.length} partes. Al finalizar una se reproducirá la siguiente.</p>
+                                            <p className="pSlices">Dividido en {videos.length} partes. Al finalizar una se reproducirá la siguiente. Parte {currentIndex + 1}/{videos.length}</p>
                                         </div>
                                     </div>
-                                    <MatchVideoPlayer videos={videos} />
+                                    <MatchVideoPlayer
+                                        videos={videos}
+                                        currentIndex={currentIndex}
+                                        setCurrentIndex={setCurrentIndex}
+                                    />
                                     <div className="downloadInfoContainer">
                                         <p className="downloadNotice">Puedes grabar un clip del partido, descargarlo y compartirlo con tus amigos (los clips duran como máximo 30 segundos).</p>
                                     </div>

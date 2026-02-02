@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { useFetchData } from '../hooks/useFetchData';
 import { useAdminStore } from '../stores/adminStore';
 import { BACKEND_API_URL } from '../config';
-import type { ClubWithCourts, ICourt, IUser, UserWithClubs } from '../types';
+import type { ClubWithCourts, ICourt, IUser, Theme, UserWithClubs } from '../types';
 
 export const useAdminActions = () => {
     const token = localStorage.getItem("access_token");
@@ -52,6 +52,7 @@ export const useAdminActions = () => {
         setIsLoadingGetUsers,
         setIsLoadingUpdateUser,
         setIsLoadingDeleteUser,
+        setIsLoadingChangeTheme,
         setErrorClubs,
         setErrorPostClub,
         isClubDataChanged,
@@ -102,6 +103,9 @@ export const useAdminActions = () => {
 
     const { isLoading: isLoadingDeleteUserFetch, fetchData: fetchDataDeleteUser } =
         useFetchData<UserWithClubs>("DELETE", token);
+
+    const { isLoading: isLoadingChangeThemeFetch, fetchData: fetchDataChangeTheme } =
+        useFetchData<Theme>("PUT", token);
 
     useEffect(() => {
         setIsLoadingClubs(isLoadingClubsFetch);
@@ -162,6 +166,10 @@ export const useAdminActions = () => {
     useEffect(() => {
         setIsLoadingDeleteUser(isLoadingDeleteUserFetch);
     }, [isLoadingDeleteUserFetch, setIsLoadingDeleteUser]);
+
+    useEffect(() => {
+        setIsLoadingChangeTheme(isLoadingChangeThemeFetch);
+    }, [isLoadingChangeThemeFetch, setIsLoadingChangeTheme]);
 
     useEffect(() => {
         setErrorClubs(errorClubsFetch);
@@ -360,6 +368,19 @@ export const useAdminActions = () => {
         return false;
     };
 
+    const handleChangeTheme = async () => {
+        const response = await fetchDataChangeTheme(`${BACKEND_API_URL}/clubs/c/${editedClubData?.id}/theme`, {
+            theme: editedClubData?.theme
+        })
+        if (response) {
+            updateClub({ ...editedClubData, theme: response } as ClubWithCourts)
+            toast.success("Colores cambiados correctamente.");
+            return true;
+        }
+        toast.error("No se pudo cambiar el tema de colores, intente nuevamente.");
+        return false;
+    }
+
     return {
         clubs,
         selectedClub,
@@ -388,6 +409,8 @@ export const useAdminActions = () => {
         handleCreateUser,
         handleUpdateUser,
         handleDeleteUser,
+        handleChangeTheme,
+
         setSelectedClub,
         setEditedClubData,
         setEditedUserData,

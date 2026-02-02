@@ -59,52 +59,7 @@ const CourtsForm = () => {
                             required
                         />
                     </div>
-                    <div className="divInputClubInfo">
-                        <label>Puerto de la cámara *</label>
-                        <input
-                            type="number"
-                            value={courtFormData.cameraPort || 0}
-                            onChange={(e) => setCourtFormData({ ...courtFormData, cameraPort: parseInt(e.target.value) || 0 })}
-                            placeholder="554"
-                            required
-                            min="1"
-                            max="65535"
-                        />
-                    </div>
                 </div>
-                <div className="divInputClubInfo">
-                    <label>Ruta de la cámara *</label>
-                    <input
-                        type="text"
-                        value={courtFormData.cameraPath || ""}
-                        onChange={(e) => setCourtFormData({ ...courtFormData, cameraPath: e.target.value })}
-                        placeholder="/stream"
-                        required
-                    />
-                </div>
-                <div className="divInputClubInfo">
-                    <label>Usuario RTSP *</label>
-                    <input
-                        type="text"
-                        value={courtFormData.rtspUsername || ""}
-                        onChange={(e) => setCourtFormData({ ...courtFormData, rtspUsername: e.target.value })}
-                        placeholder="admin"
-                        required
-                    />
-                </div>
-                {
-                    !courtToEdit &&
-                    <div className="divInputClubInfo">
-                        <label>Contraseña *</label>
-                        <input
-                            type="text"
-                            value={courtFormData.rtspPassword || ""}
-                            onChange={(e) => setCourtFormData({ ...courtFormData, rtspPassword: e.target.value })}
-                            placeholder="****"
-                            required
-                        />
-                    </div>
-                }
                 <div className="courtFormActions">
                     <Button
                         width={window.innerWidth < 510 ? "100%" : "auto"}

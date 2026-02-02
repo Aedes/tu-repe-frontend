@@ -82,7 +82,7 @@
     height: 150px;
     border-radius: 50%;
     object-fit: cover;
-    border: 5px solid #a9d703;
+    border: 5px solid var(--color-primary);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -138,12 +138,12 @@
 }
 
 .filter:hover {
-    border-color: #1c67ba;
+    border-color: var(--color-primary);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .findYourMatchTitleContainer {
-    background: linear-gradient(to right, #edfafd, white);
+    background: linear-gradient(to right, var(--color-bg), white);
     border-bottom: 1px solid lightgrey;
     border-radius: 0.5rem 0.5rem 0 0;
 }
@@ -162,7 +162,7 @@
     align-items: center;
     padding: .5rem;
     border-radius: 8px;
-    background-color: var(--celeste);
+    background-color: var(--color-secondary);
 }
 
 .findYourMatchTitleAndDescription h2 {
@@ -180,7 +180,7 @@
     margin: 0 2rem 0 2rem;
     padding: 1rem;
     background-color: var(--blanco);
-    border-left: 3px solid #1c67ba;
+    border-left: 3px solid var(--color-primary);
     border-radius: 5px;
 }
 
@@ -219,7 +219,7 @@
     padding: 1rem;
     background-color: white;
     border-radius: 0.5rem 0.5rem 0 0;
-    background: linear-gradient(to right, #edfafd, white);
+    background: linear-gradient(to right, var(--color-bg), white);
 }
 
 .titleMatchVideoPlayer {

@@ -1,6 +1,6 @@
 import { BACKEND_API_URL } from "../config"
 import { useUserStore } from "../stores/userStore"
-import type { ClubWithCourts, ICourt, UserWithClubs } from "../types"
+import type { ClubWithCourts, ICourt, UserWithClubs, Theme } from "../types"
 import { useFetchData } from "./useFetchData"
 import { useEffect } from "react"
 import { toast } from "sonner"
@@ -33,6 +33,8 @@ export const useUserActions = () => {
         setIsLoadingUploadLogo,
         setIsLoadingUpdateClub,
         setIsLoadingUpdateCourt,
+        setIsLoadingChangeTheme,
+
         setCourtFormData,
     } = useUserStore()
 
@@ -56,6 +58,9 @@ export const useUserActions = () => {
 
     const { isLoading: isLoadingUpdateCourtFetch, fetchData: fetchDataUpdateCourt } =
         useFetchData<ICourt>("PUT", token);
+
+    const { isLoading: isLoadingChangeThemeFetch, fetchData: fetchDataChangeTheme } =
+        useFetchData<Theme>("PUT", token);
 
     useEffect(() => {
         setIsLoadingClubs(isLoadingClubsFetch);
@@ -84,6 +89,10 @@ export const useUserActions = () => {
     useEffect(() => {
         setIsLoadingUpdateCourt(isLoadingUpdateCourtFetch);
     }, [isLoadingUpdateCourtFetch, setIsLoadingUpdateCourt])
+
+    useEffect(() => {
+        setIsLoadingChangeTheme(isLoadingChangeThemeFetch);
+    }, [isLoadingChangeThemeFetch, setIsLoadingChangeTheme]);
 
     useEffect(() => {
         const fetchClubsAndCourts = async () => {
@@ -180,6 +189,19 @@ export const useUserActions = () => {
         }
     };
 
+    const handleChangeTheme = async () => {
+        const response = await fetchDataChangeTheme(`${BACKEND_API_URL}/users/c/${editedClubData?.id}/theme`, {
+            theme: editedClubData?.theme
+        })
+        if (response) {
+            updateClub({ ...editedClubData, theme: response } as ClubWithCourts)
+            toast.success("Colores cambiados correctamente.");
+            return true;
+        }
+        toast.error("No se pudo cambiar el tema de colores, intente nuevamente.");
+        return false;
+    }
+
     return {
         user,
         clubs,
@@ -207,6 +229,7 @@ export const useUserActions = () => {
         handleCoverChange,
         handleLogoChange,
         handleUpdateClub,
-        handleSubmitCourtForm
+        handleSubmitCourtForm,
+        handleChangeTheme
     }
 }

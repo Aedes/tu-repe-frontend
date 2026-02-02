@@ -26,6 +26,7 @@ const AdminInterface = () => {
         isLoadingPostClub,
         isLoadingPostUser,
         isLoadingDeleteUser,
+        isLoadingChangeTheme
     } = useAdminStore()
 
     const {
@@ -231,7 +232,15 @@ const AdminInterface = () => {
                                                     <td>
                                                         {u.email}
                                                     </td>
-                                                    <td>{u.clubs?.length}</td>
+                                                    <td style={{ display: "flex", gap: ".5rem" }}>
+                                                        {
+                                                            u.clubs?.map(c => <img
+                                                                className="logoClubTable"
+                                                                src={c.profileImageUrl ? c.profileImageUrl : DEFAULT_PROFILE_IMAGE_URL}
+                                                                alt="Logo del club"
+                                                            />)
+                                                        }
+                                                    </td>
                                                     <td>
                                                         <button
                                                             className="viewDetailsButton"
@@ -305,7 +314,8 @@ const AdminInterface = () => {
                     isLoadingDeleteCover ||
                     isLoadingDeleteCourt ||
                     isLoadingDeleteUser ||
-                    isLoadingDeleteClub
+                    isLoadingDeleteClub ||
+                    isLoadingChangeTheme
                 }
             />
         </div>

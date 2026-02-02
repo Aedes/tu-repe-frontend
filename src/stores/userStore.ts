@@ -22,6 +22,7 @@ interface UserState {
     isLoadingDeleteLogo: boolean;
     isLoadingDeleteCover: boolean;
     isLoadingUpdateCourt: boolean;
+    isLoadingChangeTheme: boolean;
 
     setUser: (user: Omit<IUser, "passwordHash">) => void
 
@@ -46,6 +47,7 @@ interface UserState {
     setIsLoadingDeleteLogo: (isLoading: boolean) => void;
     setIsLoadingDeleteCover: (isLoading: boolean) => void;
     setIsLoadingUpdateCourt: (isLoading: boolean) => void;
+    setIsLoadingChangeTheme: (isLoading: boolean) => void;
 
     isClubDataChanged: () => boolean;
     resetSelectedClub: () => void;
@@ -74,6 +76,7 @@ export const useUserStore = create<UserState>((set, get) => ({
     isLoadingDeleteLogo: false,
     isLoadingDeleteCover: false,
     isLoadingUpdateCourt: false,
+    isLoadingChangeTheme: false,
 
     setUser: (user) => set({ user }),
 
@@ -123,9 +126,6 @@ export const useUserStore = create<UserState>((set, get) => ({
         courtFormData: court ? {
             name: court.name,
             cameraHost: court.cameraHost,
-            cameraPort: court.cameraPort,
-            cameraPath: court.cameraPath,
-            rtspUsername: court.rtspUsername
         } : initialCourtFormData
     }),
     setCourtFormData: (data) => set((state) => ({
@@ -143,11 +143,17 @@ export const useUserStore = create<UserState>((set, get) => ({
     setIsLoadingDeleteLogo: (isLoading) => set({ isLoadingDeleteLogo: isLoading }),
     setIsLoadingDeleteCover: (isLoading) => set({ isLoadingDeleteCover: isLoading }),
     setIsLoadingUpdateCourt: (isLoading) => set({ isLoadingUpdateCourt: isLoading }),
+    setIsLoadingChangeTheme: (isLoading) => set({ isLoadingChangeTheme: isLoading }),
 
     isClubDataChanged: () => {
         const state = get();
         if (!state.selectedClub || !state.editedClubData) return false;
-        return JSON.stringify(state.selectedClub) !== JSON.stringify(state.editedClubData);
+        const omitTheme = (club: any) => {
+            if (!club) return club;
+            const { theme, ...rest } = club;
+            return rest;
+        };
+        return JSON.stringify(omitTheme(state.selectedClub)) !== JSON.stringify(omitTheme(state.editedClubData));
     },
     resetSelectedClub: () => set({
         selectedClub: null,

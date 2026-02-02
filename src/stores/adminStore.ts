@@ -35,6 +35,7 @@ interface AdminState {
     isLoadingGetUsers: boolean
     isLoadingUpdateUser: boolean
     isLoadingDeleteUser: boolean;
+    isLoadingChangeTheme: boolean;
 
     errorClubs: Error | null;
     errorPostClub: Error | null;
@@ -85,6 +86,7 @@ interface AdminState {
     setIsLoadingGetUsers: (isLoading: boolean) => void;
     setIsLoadingUpdateUser: (isLoading: boolean) => void;
     setIsLoadingDeleteUser: (isLoading: boolean) => void;
+    setIsLoadingChangeTheme: (isLoading: boolean) => void;
 
     setErrorClubs: (error: Error | null) => void;
     setErrorPostClub: (error: Error | null) => void;
@@ -98,10 +100,6 @@ interface AdminState {
 const initialCourtFormData: Partial<ICourt & { rtspPassword: string }> = {
     name: "",
     cameraHost: "",
-    cameraPort: 0,
-    cameraPath: "",
-    rtspUsername: "",
-    rtspPassword: ""
 };
 
 export const useAdminStore = create<AdminState>((set, get) => ({
@@ -134,6 +132,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     isLoadingGetUsers: false,
     isLoadingUpdateUser: false,
     isLoadingDeleteUser: false,
+    isLoadingChangeTheme: false,
     errorClubs: null,
     errorPostClub: null,
 
@@ -232,9 +231,6 @@ export const useAdminStore = create<AdminState>((set, get) => ({
         courtFormData: court ? {
             name: court.name,
             cameraHost: court.cameraHost,
-            cameraPort: court.cameraPort,
-            cameraPath: court.cameraPath,
-            rtspUsername: court.rtspUsername
         } : initialCourtFormData
     }),
     setCourtFormData: (data) => set((state) => ({
@@ -320,6 +316,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     setIsLoadingGetUsers: (isLoading) => set({ isLoadingGetUsers: isLoading }),
     setIsLoadingUpdateUser: (isLoading) => set({ isLoadingUpdateUser: isLoading }),
     setIsLoadingDeleteUser: (isLoading) => set({ isLoadingDeleteUser: isLoading }),
+    setIsLoadingChangeTheme: (isLoading) => set({ isLoadingChangeTheme: isLoading }),
 
     setErrorClubs: (error) => set({ errorClubs: error }),
     setErrorPostClub: (error) => set({ errorPostClub: error }),
@@ -327,7 +324,12 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     isClubDataChanged: () => {
         const state = get();
         if (!state.selectedClub || !state.editedClubData) return false;
-        return JSON.stringify(state.selectedClub) !== JSON.stringify(state.editedClubData);
+        const omitTheme = (club: any) => {
+            if (!club) return club;
+            const { theme, ...rest } = club;
+            return rest;
+        };
+        return JSON.stringify(omitTheme(state.selectedClub)) !== JSON.stringify(omitTheme(state.editedClubData));
     },
     resetSelectedClub: () => set({
         selectedClub: null,
