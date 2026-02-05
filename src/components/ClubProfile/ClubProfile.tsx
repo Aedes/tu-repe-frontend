@@ -59,7 +59,9 @@ const ClubProfile = () => {
 
     const fetchVideos = async () => {
         setCurrentIndex(0)
-        const dataVideos = await fetchDataVideos(`${BACKEND_API_URL}/videos/urls?startTime=${day}T${hour}:00Z&courtId=${courtId}`)
+        const localDate = new Date(`${day}T${hour}:00`)
+        const startTimeUTC = localDate.toISOString()
+        const dataVideos = await fetchDataVideos(`${BACKEND_API_URL}/videos/urls?startTime=${encodeURIComponent(startTimeUTC)}&courtId=${courtId}`)
         setVideos(dataVideos)
         if (dataVideos && dataVideos.length > 0) {
             setTimeout(() => {
