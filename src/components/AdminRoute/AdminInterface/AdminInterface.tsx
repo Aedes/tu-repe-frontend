@@ -235,6 +235,7 @@ const AdminInterface = () => {
                                                     <td style={{ display: "flex", gap: ".5rem" }}>
                                                         {
                                                             u.clubs?.map(c => <img
+                                                                key={c.id}
                                                                 className="logoClubTable"
                                                                 src={c.profileImageUrl ? c.profileImageUrl : DEFAULT_PROFILE_IMAGE_URL}
                                                                 alt="Logo del club"

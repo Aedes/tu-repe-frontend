@@ -43,7 +43,7 @@ interface AdminState {
     setClubs: (clubs: ClubWithCourts[]) => void;
     addClub: (club: IClub) => void;
     updateClub: (club: ClubWithCourts) => void;
-    deleteClub: (clubId: number) => void;
+    deleteClub: (clubId: string) => void;
     setSelectedClub: (club: ClubWithCourts | null) => void;
     setEditedClubData: (data: IClub | null) => void;
     updateClubInList: (club: IClub) => void;
@@ -51,7 +51,7 @@ interface AdminState {
     setCourts: (courts: ICourt[]) => void;
     addCourt: (court: ICourt) => void;
     updateCourt: (court: ICourt) => void;
-    deleteCourt: (courtId: number) => void;
+    deleteCourt: (courtId: string) => void;
     setCourtToEdit: (court: ICourt | null) => void;
     setCourtFormData: (data: Partial<ICourt & { rtspPassword: string }>) => void;
     resetCourtFormData: () => void;
@@ -59,9 +59,9 @@ interface AdminState {
     setUsers: (users: UserWithClubs[]) => void
     addUser: (user: IUser) => void
     updateUser: (user: IUser) => void
-    deleteUser: (userId: number) => void;
-    addClubTouser: (club: IClub, userId: number) => void
-    removeClubFromUser: (clubId: number, userId: number) => void
+    deleteUser: (userId: string) => void;
+    addClubTouser: (club: IClub, userId: string) => void
+    removeClubFromUser: (clubId: string, userId: string) => void
     setSelectedUser: (user: UserWithClubs | null) => void
     setEditedUserData: (data: IUser | null) => void
 
@@ -255,7 +255,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
                 : state.editedUserData
         });
     },
-    addClubTouser: (club: IClub, userId: number) => {
+    addClubTouser: (club: IClub, userId: string) => {
         const state = get();
         const updatedUsers = state.users.map(u => u.id === userId ? { ...u, clubs: [...u.clubs!, club] } : u)
         set({
@@ -266,7 +266,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
         });
 
     },
-    removeClubFromUser: (clubId: number, userId: number) => {
+    removeClubFromUser: (clubId: string, userId: string) => {
         const state = get();
         const updatedUsers = state.users.map(u =>
             u.id === userId

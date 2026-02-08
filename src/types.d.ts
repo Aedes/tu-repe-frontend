@@ -5,7 +5,7 @@ export interface Theme {
 }
 
 export interface IClub {
-    id?: number;
+    id?: string;
     name: string;
     openTime: string;
     closeTime: string;
@@ -25,7 +25,7 @@ export interface IClub {
 }
 
 export interface ICourt {
-    id?: number;
+    id?: string;
     clubId: number;
     name: string;
     cameraHost: string;
@@ -33,7 +33,7 @@ export interface ICourt {
 }
 
 export interface IVideo {
-    id?: number;
+    id?: string;
     courtId: number;
     fileName: string;
     startTime: Date;
@@ -46,7 +46,7 @@ export interface ClubWithCourts extends IClub {
 }
 
 export interface IUser {
-    id?: number;
+    id?: string;
     email: string;
     passwordHash: string;
     name: string;

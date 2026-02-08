@@ -232,6 +232,7 @@ export const useAdminActions = () => {
     const handleDeleteClub = async () => {
         const response = await fetchDataDeleteClub(`${BACKEND_API_URL}/clubs/c/${selectedClub?.id}`);
         if (response) {
+            setIsLoadingDeleteClub(false)
             deleteClub(selectedClub!.id!);
             toast.success("Club eliminado correctamente.");
             return true;
@@ -329,7 +330,7 @@ export const useAdminActions = () => {
             toast.error("No se pudo eliminar la cancha, intente nuevamente.");
             return false;
         }
-        deleteCourt(parseInt(courtId));
+        deleteCourt(courtId);
         toast.success("Cancha eliminada correctamente.");
         return true;
     };
