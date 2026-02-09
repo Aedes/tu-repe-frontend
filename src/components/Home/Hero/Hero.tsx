@@ -73,7 +73,7 @@ const Hero = () => {
                                 <button
                                     className="clubItem"
                                     key={club.id}
-                                    onClick={() => navigate("/c/" + club.id)}
+                                    onClick={() => navigate("/c/" + club.urlId)}
                                 >
                                     <div className="logoClubContainer">
                                         <img className="searchLogoImg" src={club.profileImageUrl ? club.profileImageUrl : DEFAULT_PROFILE_IMAGE_URL} alt="Logo del club" />

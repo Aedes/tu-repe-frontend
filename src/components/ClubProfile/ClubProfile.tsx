@@ -11,7 +11,7 @@ import MatchVideoPlayer from "./MatchVideoPlayer/MatchVideoPlayer";
 import { toast } from "sonner";
 
 const ClubProfile = () => {
-    const { clubId } = useParams();
+    const { clubUrlId } = useParams();
     const { isLoading, error, fetchData } = useFetchData<IClub>("GET")
     const { isLoading: isLoadingCourts, error: errorCourts, fetchData: fetchDataCourts } = useFetchData<ICourt[]>("GET")
     const [club, setClub] = useState<IClub | null>(null)
@@ -26,8 +26,8 @@ const ClubProfile = () => {
 
     useEffect(() => {
         const fetchClubAndCourts = async () => {
-            const dataClub = await fetchData(`${BACKEND_API_URL}/clubs/c/${clubId}`)
-            const dataCourts = await fetchDataCourts(`${BACKEND_API_URL}/courts/cl/${clubId}`)
+            const dataClub = await fetchData(`${BACKEND_API_URL}/clubs/c-url/${clubUrlId}`)
+            const dataCourts = await fetchDataCourts(`${BACKEND_API_URL}/courts/cl-url/${clubUrlId}`)
             setClub(dataClub)
             setCourts(dataCourts)
         }

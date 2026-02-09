@@ -1,6 +1,7 @@
 import Button from "../../../../common/Button/Button";
-import { PlusIcon, CameraIcon, PencilIcon } from "../../../../../assets/Icons";
+import { PlusIcon, CameraIcon, PencilIcon, CameraOffIcon, CopyIcon } from "../../../../../assets/Icons";
 import { useAdminActions } from "../../../../../hooks/useAdminActions";
+import { toast } from "sonner";
 
 const CourtsAndData = () => {
 
@@ -43,6 +44,11 @@ const CourtsAndData = () => {
         }
     };
 
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(`https://turepe.aedestec.com/c/${editedClubData?.urlId}`);
+        toast.success("¡Link copiado!")
+    }
+
     if (!selectedClub || !editedClubData) return null
 
     return (
@@ -64,7 +70,7 @@ const CourtsAndData = () => {
                 </div>
                 {courts.length === 0 ? (
                     <div className="noCourtsMessage">
-                        <CameraIcon width={48} height={48} fill="#ccc" />
+                        <CameraOffIcon width={48} height={48} fill="#ccc" />
                         <p>No hay canchas registradas</p>
                         <p className="noCourtsSubtext">Agrega una nueva cancha para comenzar</p>
                     </div>
@@ -117,6 +123,35 @@ const CourtsAndData = () => {
                         value={editedClubData.name}
                         onChange={(e) => setEditedClubData({ ...editedClubData, name: e.target.value })}
                     />
+                </div>
+                <div className="divInputClubInfo urlId">
+                    <label>Link para jugadores:</label>
+                    <div className="url">
+                        <label>turepe.aedestec.com/c/</label>
+                        <input
+                            className="inputUrl"
+                            type="text"
+                            value={editedClubData.urlId}
+                            onChange={(e) => setEditedClubData({ ...editedClubData, urlId: e.target.value.trim() })}
+                        />
+                    </div>
+                    <Button
+                        onClick={copyToClipboard}
+                        margin="0"
+                        padding=".5rem"
+                        color="white"
+                        backgroundColor="#0077b6"
+                        width="min-content"
+                        icon={
+                            <CopyIcon
+                                width={16}
+                                height={16}
+                                fill="white"
+                            />
+                        }
+                    >
+                        Copiar
+                    </Button>
                 </div>
                 <div className="divInputClubInfoRow">
                     <div className="divInputClubInfo">

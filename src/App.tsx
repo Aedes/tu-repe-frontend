@@ -17,7 +17,7 @@ function App() {
           <Toaster richColors />
           <Routes>
             <Route path='/' element={<Home />} />
-            <Route path='/c/:clubId' element={<ClubProfile />} />
+            <Route path='/c/:clubUrlId' element={<ClubProfile />} />
             <Route path='/admin'
               element={
                 <AdminRoute>

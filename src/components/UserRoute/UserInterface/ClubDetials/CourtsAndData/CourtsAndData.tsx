@@ -1,4 +1,5 @@
-import { CameraIcon, PencilIcon } from "../../../../../assets/Icons";
+import { toast } from "sonner";
+import { CameraIcon, PencilIcon, CopyIcon } from "../../../../../assets/Icons";
 import { useUserActions } from "../../../../../hooks/useUserActions";
 import Button from "../../../../common/Button/Button";
 
@@ -34,6 +35,11 @@ const CourtsAndData = () => {
         setIsOpenClubForm(false);
         resetSelectedClub();
     };
+
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(`https://turepe.aedestec.com/c/${editedClubData?.urlId}`);
+        toast.success("¡Link copiado!")
+    }
 
     return (
         <div className="animationIn">
@@ -85,6 +91,35 @@ const CourtsAndData = () => {
                         value={editedClubData.name}
                         onChange={(e) => setEditedClubData({ ...editedClubData, name: e.target.value })}
                     />
+                </div>
+                <div className="divInputClubInfo urlId">
+                    <label>Link para jugadores:</label>
+                    <div className="url">
+                        <label>turepe.aedestec.com/c/</label>
+                        <input
+                            className="inputUrl"
+                            type="text"
+                            value={editedClubData.urlId}
+                            onChange={(e) => setEditedClubData({ ...editedClubData, urlId: e.target.value.trim() })}
+                        />
+                    </div>
+                    <Button
+                        onClick={copyToClipboard}
+                        margin="0"
+                        padding=".5rem"
+                        color="white"
+                        backgroundColor="#0077b6"
+                        width="min-content"
+                        icon={
+                            <CopyIcon
+                                width={16}
+                                height={16}
+                                fill="white"
+                            />
+                        }
+                    >
+                        Copiar
+                    </Button>
                 </div>
                 <div className="divInputClubInfoRow">
                     <div className="divInputClubInfo">

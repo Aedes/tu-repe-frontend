@@ -145,7 +145,7 @@ const UserInterface = () => {
                 <CourtsForm />
             </Modal>
             <ModalLoading
-                text={(isLoadingUploadLogo || isLoadingUploadCover || isLoadingDeleteLogo || isLoadingDeleteCover) ? "Acualizando imágen..." : "Cargando..."}
+                text={(isLoadingUploadLogo || isLoadingUploadCover || isLoadingDeleteLogo || isLoadingDeleteCover) ? "Actualizando imágen..." : "Cargando..."}
                 isOpen={
                     isLoadingUploadLogo ||
                     isLoadingUploadCover ||
