@@ -45,7 +45,7 @@ const UserDetails = () => {
         }
     }
 
-    const handleAssignOwner = async (clubId: number) => {
+    const handleAssignOwner = async (clubId: string) => {
         setBarClubsOpen(false)
         const response = await fetchDataAssignOwner(`${BACKEND_API_URL}/users/cu`, {
             userId: userSelected?.id,
@@ -61,7 +61,7 @@ const UserDetails = () => {
         toast.success("Dueño asignado con éxito.")
     }
 
-    const handleUnassignOwner = async (clubId: number) => {
+    const handleUnassignOwner = async (clubId: string) => {
         const response = await fetchDataUnassignOwner(`${BACKEND_API_URL}/users/cu`, {
             userId: userSelected?.id,
             clubId
