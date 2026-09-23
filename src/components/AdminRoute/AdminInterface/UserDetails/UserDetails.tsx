@@ -7,10 +7,10 @@ import { BACKEND_API_URL, DEFAULT_PROFILE_IMAGE_URL } from "../../../../config";
 import { useFetchData } from "../../../../hooks/useFetchData";
 import { useState } from "react";
 import { toast } from "sonner";
+import { userFacingError } from "../../../../api/errorMessage";
 import type { IClub } from "../../../../types";
 
 const UserDetails = () => {
-    const token = localStorage.getItem("access_token")
     const {
         isLoadingUpdateUser,
         addClubTouser,
@@ -29,8 +29,8 @@ const UserDetails = () => {
         handleDeleteUser,
     } = useAdminActions()
 
-    const { isLoading: isLoadingAssignOwner, fetchData: fetchDataAssignOwner } = useFetchData<{ clubAssigned: IClub }>("POST", token)
-    const { isLoading: isLoadingUnassignOwner, fetchData: fetchDataUnassignOwner } = useFetchData<{ clubUnassigned: IClub }>("DELETE", token)
+    const { isLoading: isLoadingAssignOwner, fetchData: fetchDataAssignOwner, lastErrorRef: assignOwnerError } = useFetchData<{ clubAssigned: IClub }>("POST")
+    const { isLoading: isLoadingUnassignOwner, fetchData: fetchDataUnassignOwner, lastErrorRef: unassignOwnerError } = useFetchData<{ clubUnassigned: IClub }>("DELETE")
     const [barClubsOpen, setBarClubsOpen] = useState(false)
 
     const handleCloseUserDetails = () => {
@@ -53,7 +53,7 @@ const UserDetails = () => {
         })
 
         if (!response) {
-            toast.error("Error asignando dueño. Intenta de nuevo más tarde.")
+            toast.error(userFacingError(assignOwnerError.current, "No se pudo asignar el dueño"))
             return
         }
 
@@ -68,7 +68,7 @@ const UserDetails = () => {
         })
 
         if (!response) {
-            toast.error("Error desasignando dueño. Intenta de nuevo más tarde.")
+            toast.error(userFacingError(unassignOwnerError.current, "No se pudo quitar el dueño"))
             return
         }
 

@@ -73,10 +73,7 @@ const CourtsAndData = () => {
                                     </div>
                                 </div>
                                 <div className="courtCardDetails">
-                                    <div className="courtDetailItem">
-                                        <span className="courtDetailLabel">Host de cámara:</span>
-                                        <span className="courtDetailValue">{court.cameraHost}</span>
-                                    </div>
+                                    <p>Solo el nombre de la cancha es editable. La configuración de cámara la gestiona el administrador.</p>
                                 </div>
                             </div>
                         ))}
@@ -100,7 +97,7 @@ const CourtsAndData = () => {
                             className="inputUrl"
                             type="text"
                             value={editedClubData.urlId}
-                            onChange={(e) => setEditedClubData({ ...editedClubData, urlId: e.target.value.trim() })}
+                            readOnly
                         />
                     </div>
                     <Button
@@ -186,7 +183,7 @@ const CourtsAndData = () => {
                 <div className="divInputClubInfo">
                     <label>Descripción:</label>
                     <textarea
-                        value={editedClubData.description}
+                        value={editedClubData.description ?? ""}
                         onChange={(e) => setEditedClubData({ ...editedClubData, description: e.target.value })}
                     />
                 </div>
@@ -195,7 +192,7 @@ const CourtsAndData = () => {
                         <label>Teléfono del club:</label>
                         <input
                             type="text"
-                            value={editedClubData.phone}
+                            value={editedClubData.phone ?? ""}
                             onChange={(e) => setEditedClubData({ ...editedClubData, phone: e.target.value })}
                         />
                     </div>
@@ -203,7 +200,7 @@ const CourtsAndData = () => {
                         <label>Instagram del club:</label>
                         <input
                             type="text"
-                            value={editedClubData.instagramHandle}
+                            value={editedClubData.instagramHandle ?? ""}
                             onChange={(e) => setEditedClubData({ ...editedClubData, instagramHandle: e.target.value })}
                         />
                     </div>

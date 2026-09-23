@@ -4,9 +4,10 @@ import { useFetchData } from '../hooks/useFetchData';
 import { useAdminStore } from '../stores/adminStore';
 import { BACKEND_API_URL } from '../config';
 import type { ClubWithCourts, ICourt, IUser, Theme, UserWithClubs } from '../types';
+import { toClubWriteDto } from '../dto/clubDto';
+import { userFacingError } from '../api/errorMessage';
 
 export const useAdminActions = () => {
-    const token = localStorage.getItem("access_token");
     const {
         clubs,
         selectedClub,
@@ -63,49 +64,52 @@ export const useAdminActions = () => {
         useFetchData<typeof clubs>("GET");
 
     const { isLoading: isLoadingPostClubFetch, error: errorPostClubFetch, fetchData: fetchDataPostClub } =
-        useFetchData<ClubWithCourts>("POST", token);
+        useFetchData<ClubWithCourts>("POST");
 
-    const { isLoading: isLoadingUpdateClubFetch, fetchData: fetchDataUpdateClub } =
-        useFetchData<ClubWithCourts>("PUT", token);
+    const { isLoading: isLoadingUpdateClubFetch, fetchData: fetchDataUpdateClub, lastErrorRef: updateClubError } =
+        useFetchData<ClubWithCourts>("PUT");
 
-    const { isLoading: isLoadingDeleteClubFetch, fetchData: fetchDataDeleteClub } =
-        useFetchData<ClubWithCourts>("DELETE", token);
+    const { isLoading: isLoadingDeleteClubFetch, fetchData: fetchDataDeleteClub, lastErrorRef: deleteClubError } =
+        useFetchData<ClubWithCourts>("DELETE");
 
-    const { isLoading: isLoadingUploadLogoFetch, fetchData: fetchDataUploadLogo } =
-        useFetchData<ClubWithCourts>("PUT", token);
+    const { isLoading: isLoadingUploadLogoFetch, fetchData: fetchDataUploadLogo, lastErrorRef: uploadLogoError } =
+        useFetchData<ClubWithCourts>("PUT");
 
-    const { isLoading: isLoadingUploadCoverFetch, fetchData: fetchDataUploadCover } =
-        useFetchData<ClubWithCourts>("PUT", token);
+    const { isLoading: isLoadingUploadCoverFetch, fetchData: fetchDataUploadCover, lastErrorRef: uploadCoverError } =
+        useFetchData<ClubWithCourts>("PUT");
 
-    const { isLoading: isLoadingDeleteLogoFetch, fetchData: fetchDataDeleteLogo } =
-        useFetchData<ClubWithCourts>("DELETE", token);
+    const { isLoading: isLoadingDeleteLogoFetch, fetchData: fetchDataDeleteLogo, lastErrorRef: deleteLogoError } =
+        useFetchData<ClubWithCourts>("DELETE");
 
-    const { isLoading: isLoadingDeleteCoverFetch, fetchData: fetchDataDeleteCover } =
-        useFetchData<ClubWithCourts>("DELETE", token);
+    const { isLoading: isLoadingDeleteCoverFetch, fetchData: fetchDataDeleteCover, lastErrorRef: deleteCoverError } =
+        useFetchData<ClubWithCourts>("DELETE");
 
-    const { isLoading: isLoadingPostCourtFetch, fetchData: fetchDataPostCourt } =
-        useFetchData<ICourt>("POST", token);
+    const { isLoading: isLoadingPostCourtFetch, fetchData: fetchDataPostCourt, lastErrorRef: createCourtError } =
+        useFetchData<ICourt>("POST");
 
-    const { isLoading: isLoadingUpdateCourtFetch, fetchData: fetchDataUpdateCourt } =
-        useFetchData<ICourt>("PUT", token);
+    const { isLoading: isLoadingUpdateCourtFetch, fetchData: fetchDataUpdateCourt, lastErrorRef: updateCourtError } =
+        useFetchData<ICourt>("PUT");
 
-    const { isLoading: isLoadingDeleteCourtFetch, fetchData: fetchDataDeleteCourt } =
-        useFetchData<ICourt>("DELETE", token);
+    const { isLoading: isLoadingDeleteCourtFetch, fetchData: fetchDataDeleteCourt, lastErrorRef: deleteCourtError } =
+        useFetchData<ICourt>("DELETE");
 
-    const { isLoading: isLoadingPostUserFetch, fetchData: fetchDataPostUser } =
-        useFetchData<IUser>("POST", token);
+    const { isLoading: isLoadingPostUserFetch, fetchData: fetchDataPostUser, lastErrorRef: createUserError } =
+        useFetchData<IUser>("POST");
 
     const { isLoading: isLoadingGetUsersFetch, fetchData: fetchDataGetUsers } =
-        useFetchData<UserWithClubs[]>("GET", token);
+        useFetchData<UserWithClubs[]>("GET");
 
-    const { isLoading: isLoadingUpdateUserFetch, fetchData: fetchDataUpdateUser } =
-        useFetchData<UserWithClubs>("PUT", token);
+    const { isLoading: isLoadingUpdateUserFetch, fetchData: fetchDataUpdateUser, lastErrorRef: updateUserError } =
+        useFetchData<UserWithClubs>("PUT");
 
-    const { isLoading: isLoadingDeleteUserFetch, fetchData: fetchDataDeleteUser } =
-        useFetchData<UserWithClubs>("DELETE", token);
+    const { isLoading: isLoadingDeleteUserFetch, fetchData: fetchDataDeleteUser, lastErrorRef: deleteUserError } =
+        useFetchData<UserWithClubs>("DELETE");
 
-    const { isLoading: isLoadingChangeThemeFetch, fetchData: fetchDataChangeTheme } =
-        useFetchData<Theme>("PUT", token);
+    const { isLoading: isLoadingChangeThemeFetch, fetchData: fetchDataChangeTheme, lastErrorRef: changeThemeError } =
+        useFetchData<Theme>("PUT");
+    const { fetchData: fetchDataRotateKey, lastErrorRef: rotateKeyError } = useFetchData<ICourt & { streamKey?: string; cameraPath?: string }>("POST");
+    const { fetchData: fetchDataPublishTarget, lastErrorRef: publishTargetError } = useFetchData<{ cameraPath: string; streamKey: string }>("GET");
+    const { fetchData: fetchDataLogout } = useFetchData<{ ok: boolean }>("POST");
 
     useEffect(() => {
         setIsLoadingClubs(isLoadingClubsFetch);
@@ -175,7 +179,7 @@ export const useAdminActions = () => {
         setErrorClubs(errorClubsFetch);
         if (errorClubsFetch) {
             console.error("Error fetching clubs:", errorClubsFetch);
-            toast.error("Error al cargar los clubes. Por favor, intente nuevamente.");
+            toast.error(userFacingError(errorClubsFetch, "No se pudieron cargar los clubes"));
         }
     }, [errorClubsFetch, setErrorClubs]);
 
@@ -183,7 +187,7 @@ export const useAdminActions = () => {
         setErrorPostClub(errorPostClubFetch);
         if (errorPostClubFetch) {
             console.error("Error creating club:", errorPostClubFetch);
-            toast.error("Error al crear el club. Por favor, intente nuevamente.");
+            toast.error(userFacingError(errorPostClubFetch, "No se pudo crear el club"));
         }
     }, [errorPostClubFetch, setErrorPostClub]);
 
@@ -219,13 +223,13 @@ export const useAdminActions = () => {
 
     const handleUpdateClub = async () => {
         if (!editedClubData) return false;
-        const response = await fetchDataUpdateClub(`${BACKEND_API_URL}/clubs/c/${selectedClub?.id}`, editedClubData);
+        const response = await fetchDataUpdateClub(`${BACKEND_API_URL}/clubs/c/${selectedClub?.id}`, toClubWriteDto(editedClubData));
         if (response) {
             updateClub(response);
             toast.success("Club actualizado exitosamente.");
             return true;
         }
-        toast.error("Error al actualizar el club. Por favor, intente nuevamente.");
+        toast.error(userFacingError(updateClubError.current, "No se pudo actualizar el club"));
         return false;
     };
 
@@ -237,7 +241,7 @@ export const useAdminActions = () => {
             toast.success("Club eliminado correctamente.");
             return true;
         }
-        toast.error("No se pudo eliminar el club, intente nuevamente.");
+        toast.error(userFacingError(deleteClubError.current, "No se pudo eliminar el club"));
         return false;
     };
 
@@ -255,7 +259,7 @@ export const useAdminActions = () => {
             return;
         }
 
-        toast.error("Error al subir el logo. Por favor, intente nuevamente.");
+        toast.error(userFacingError(uploadLogoError.current, "No se pudo subir el logo"));
     };
 
     const handleCoverChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -272,7 +276,7 @@ export const useAdminActions = () => {
             return;
         }
 
-        toast.error("Error al subir la portada. Por favor, intente nuevamente.");
+        toast.error(userFacingError(uploadCoverError.current, "No se pudo subir la portada"));
     };
 
     const handleDeleteLogo = async () => {
@@ -284,7 +288,7 @@ export const useAdminActions = () => {
             return;
         }
 
-        toast.error("Error al eliminar el logo. Por favor, intente nuevamente.");
+        toast.error(userFacingError(deleteLogoError.current, "No se pudo eliminar el logo"));
     };
 
     const handleDeleteCover = async () => {
@@ -296,29 +300,40 @@ export const useAdminActions = () => {
             return;
         }
 
-        toast.error("Error al eliminar la portada. Por favor, intente nuevamente.");
+        toast.error(userFacingError(deleteCoverError.current, "No se pudo eliminar la portada"));
     };
 
     const handleSubmitCourtForm = async () => {
         if (!selectedClub) return false;
 
         if (courtToEdit) {
-            const response = await fetchDataUpdateCourt(`${BACKEND_API_URL}/courts/c/${courtToEdit?.id}/admin`, courtFormData);
+            const response = await fetchDataUpdateCourt(`${BACKEND_API_URL}/courts/c/${courtToEdit?.id}/admin`, {
+                name: courtFormData.name,
+                cameraHost: courtFormData.cameraHost,
+            });
             if (!response) {
-                toast.error("No se pudo editar la cancha, intente nuevamente.");
+                toast.error(userFacingError(updateCourtError.current, "No se pudo editar la cancha"));
                 return false;
             }
             updateCourt(response);
             toast.success("Cancha editada correctamente.");
             return true;
         } else {
-            const response = await fetchDataPostCourt(`${BACKEND_API_URL}/courts`, { ...courtFormData, clubId: selectedClub.id! });
+            const response = await fetchDataPostCourt(`${BACKEND_API_URL}/courts`, {
+                name: courtFormData.name,
+                cameraHost: courtFormData.cameraHost,
+                clubId: selectedClub.id!,
+            });
             if (!response) {
-                toast.error("No se pudo crear la cancha, intente nuevamente.");
+                toast.error(userFacingError(createCourtError.current, "No se pudo crear la cancha"));
                 return false;
             }
             addCourt(response);
-            toast.success("Cancha agregada correctamente.");
+            if (response.cameraPath) {
+                toast.success(`Cancha creada. Ruta: ${response.cameraPath}`, { duration: 20000 });
+            } else {
+                toast.success("Cancha agregada correctamente.");
+            }
             return true;
         }
     };
@@ -327,7 +342,7 @@ export const useAdminActions = () => {
         if (!courtId) return false;
         const response = await fetchDataDeleteCourt(`${BACKEND_API_URL}/courts/c/${courtId}`);
         if (!response) {
-            toast.error("No se pudo eliminar la cancha, intente nuevamente.");
+            toast.error(userFacingError(deleteCourtError.current, "No se pudo eliminar la cancha"));
             return false;
         }
         deleteCourt(courtId);
@@ -338,7 +353,7 @@ export const useAdminActions = () => {
     const handleCreateUser = async (data: { [key: string]: any }) => {
         const response = await fetchDataPostUser(`${BACKEND_API_URL}/users`, data)
         if (!response) {
-            toast.error("No se pudo crear el usuario, intente de nuevo.");
+            toast.error(userFacingError(createUserError.current, "No se pudo crear el usuario"));
             return false;
         }
         addUser(response)
@@ -348,13 +363,16 @@ export const useAdminActions = () => {
 
     const handleUpdateUser = async () => {
         if (!editedUserData) return false;
-        const response = await fetchDataUpdateUser(`${BACKEND_API_URL}/users/u/${userSelected?.id}`, editedUserData);
+        const response = await fetchDataUpdateUser(`${BACKEND_API_URL}/users/u/${userSelected?.id}`, {
+            name: editedUserData.name,
+            email: editedUserData.email,
+        });
         if (response) {
             updateUser(response);
             toast.success("Usuario actualizado exitosamente.");
             return true;
         }
-        toast.error("Error al actualizar el usuario. Por favor, intente nuevamente.");
+        toast.error(userFacingError(updateUserError.current, "No se pudo actualizar el usuario"));
         return false;
     };
 
@@ -365,8 +383,33 @@ export const useAdminActions = () => {
             toast.success("Usuario eliminado correctamente.");
             return true;
         }
-        toast.error("No se pudo eliminar el usuario, intente nuevamente.");
+        toast.error(userFacingError(deleteUserError.current, "No se pudo eliminar el usuario"));
         return false;
+    };
+
+    const handleRotateStreamKey = async (courtId: string) => {
+        const response = await fetchDataRotateKey(`${BACKEND_API_URL}/courts/c/${courtId}/rotate-stream-key`);
+        if (!response?.streamKey || !response.cameraPath) {
+            toast.error(userFacingError(rotateKeyError.current, "No se pudo cambiar la clave de la cámara"));
+            return null;
+        }
+        updateCourt(response);
+        toast.success(`Clave rotada. Nueva ruta: ${response.cameraPath}`, { duration: 20000 });
+        return { cameraPath: response.cameraPath, streamKey: response.streamKey };
+    };
+
+    const handleRevealPublishTarget = async (courtId: string) => {
+        const response = await fetchDataPublishTarget(`${BACKEND_API_URL}/courts/c/${courtId}/publish-target`);
+        if (!response?.cameraPath || !response.streamKey) {
+            toast.error(userFacingError(publishTargetError.current, "No se pudo obtener la ruta de la cámara"));
+            return null;
+        }
+        return response;
+    };
+
+    const handleLogout = async () => {
+        await fetchDataLogout(`${BACKEND_API_URL}/auth/admin/logout`);
+        window.location.replace("/login-admin");
     };
 
     const handleChangeTheme = async () => {
@@ -378,7 +421,7 @@ export const useAdminActions = () => {
             toast.success("Colores cambiados correctamente.");
             return true;
         }
-        toast.error("No se pudo cambiar el tema de colores, intente nuevamente.");
+        toast.error(userFacingError(changeThemeError.current, "No se pudieron cambiar los colores"));
         return false;
     }
 
@@ -419,6 +462,9 @@ export const useAdminActions = () => {
 
         handleSubmitCourtForm,
         handleDeleteCourt,
+        handleRotateStreamKey,
+        handleRevealPublishTarget,
+        handleLogout,
 
         setIsOpenForm: useAdminStore.getState().setIsOpenForm,
         setIsOpenClubDetails: useAdminStore.getState().setIsOpenClubDetails,

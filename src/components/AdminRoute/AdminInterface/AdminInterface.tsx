@@ -46,6 +46,7 @@ const AdminInterface = () => {
         setIsOpenCourtForm,
         setIsOpenUserForm,
         setIsOpenUserDetailsForm,
+        handleLogout,
     } = useAdminActions();
 
     const handleOpenClubDetails = (club: typeof clubs[0]) => {
@@ -97,6 +98,7 @@ const AdminInterface = () => {
                         <h1>Hola, Aedes 👋</h1>
                         <p>Bienvenido al panel de administración de Tu Repe</p>
                     </div>
+                    <Button margin="0" backgroundColor="#333" color="white" onClick={() => void handleLogout()}>Cerrar sesión</Button>
                     <div className="adminInterfaceActions">
                         <Button
                             margin="0"
@@ -287,10 +289,10 @@ const AdminInterface = () => {
                 inputs={[
                     { label: "Nombre", type: "text", name: "name", placeholder: "Héctor Hugo", required: true },
                     { label: "Email", type: "text", name: "email", placeholder: "hectorhugo@email.com", required: true },
-                    { label: "Contraseña", type: "text", name: "password", placeholder: "******", required: true },
+                    { label: "Contraseña", type: "password", name: "password", placeholder: "Mínimo 12 caracteres", required: true },
                 ]}
                 title="Agregar nuevo usuario"
-                subtitle="Los campos con * son obligatorios"
+                subtitle="La contraseña debe tener 12 o más caracteres, con mayúscula, minúscula y número."
                 initialData={{}}
                 onSubmitForm={(data) => handleCreateUserAndClose(data)}
                 onClose={() => setIsOpenUserForm(false)}

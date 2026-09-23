@@ -311,6 +311,15 @@
     word-break: break-word;
 }
 
+.courtPublishTarget {
+    grid-column: 1 / -1;
+}
+
+.courtPublishValue {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.85rem;
+}
+
 .noCourtsMessage {
     display: flex;
     flex-direction: column;

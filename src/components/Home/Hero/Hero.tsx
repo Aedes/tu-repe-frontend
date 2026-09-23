@@ -7,27 +7,34 @@ import { BACKEND_API_URL, DEFAULT_PROFILE_IMAGE_URL } from "../../../config";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { userFacingError } from "../../../api/errorMessage";
 import { openWhatsappTuRepe } from "../../../openWhatsAppTuRepe";
 
 const Hero = () => {
-    const { error, fetchData } = useFetchData<IClub[]>("GET")
+    const { fetchData, lastErrorRef } = useFetchData<IClub[]>("GET")
     const [clubs, setClubs] = useState<IClub[]>([])
     const [searchTerm, setSearchTerm] = useState("")
     const navigate = useNavigate()
 
     useEffect(() => {
+        let active = true
         const fetchClubs = async () => {
             const data = await fetchData(`${BACKEND_API_URL}/clubs`)
+            if (!active) return
+            if (!data) {
+                if (lastErrorRef.current) {
+                    toast.error(userFacingError(lastErrorRef.current, "No se pudieron cargar los clubes"))
+                }
+                return
+            }
             setClubs(data)
         }
 
-        fetchClubs()
+        void fetchClubs()
+        return () => {
+            active = false
+        }
     }, [])
-
-    if (error) {
-        console.error(error)
-        toast.error("Error al obtener los clubs, inténtalo de nuevo más tarde.")
-    }
 
     return (
         <div id="inicio" className="heroSection">

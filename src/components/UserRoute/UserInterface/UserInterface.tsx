@@ -9,6 +9,7 @@ import Modal from "../../common/Modal/Modal";
 import ClubDetials from "./ClubDetials/ClubDetials";
 import ModalLoading from "../../common/ModalLoading/ModalLoading";
 import CourtsForm from "./CourtsForm/CourtsForm";
+import Button from "../../common/Button/Button";
 
 const UserInterface = () => {
 
@@ -28,7 +29,8 @@ const UserInterface = () => {
         isOpenCourtForm,
         setIsOpenClubForm,
         setSelectedClub,
-        setIsOpenCourtForm
+        setIsOpenCourtForm,
+        handleLogout,
     } = useUserActions()
 
     const handleOpenClubForm = (club: typeof clubs[0]) => {
@@ -61,6 +63,7 @@ const UserInterface = () => {
                         <h1>Hola, {user?.name} 👋</h1>
                         <p>Bienvenido al panel de administración de Tu Repe</p>
                     </div>
+                    <Button margin="0" backgroundColor="#333" color="white" onClick={() => void handleLogout()}>Cerrar sesión</Button>
                 </div>
                 {
                     isLoadingClubs ?

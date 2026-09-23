@@ -4,16 +4,29 @@ import Button from "../../common/Button/Button";
 import { DownloadIcon, StartRecordingIcon, StopRecordingIcon, CheckIcon } from "../../../assets/Icons";
 import Modal from "../../common/Modal/Modal";
 import { toast } from "sonner";
+import { userFacingError } from "../../../api/errorMessage";
 import { BACKEND_API_URL } from "../../../config";
 import { useFetchData } from "../../../hooks/useFetchData";
+import TurnstileWidget from "../../common/TurnstileWidget/TurnstileWidget";
+
+type VideoPart = { url: string; startTime: string; endTime: string }
 
 type Props = {
-    videos: string[];
-    currentIndex: number;
+    mode: "unified"
+    videoUrl: string
+    onRefreshUrl?: () => Promise<string | null>
+} | {
+    mode: "parts"
+    videos: VideoPart[]
+    currentIndex: number
     setCurrentIndex: React.Dispatch<SetStateAction<number>>
-};
+}
 
-const MatchVideoPlayer: React.FC<Props> = ({ videos, currentIndex, setCurrentIndex }) => {
+const MatchVideoPlayer: React.FC<Props> = (props) => {
+    const activeUrl = props.mode === "unified" ? props.videoUrl : props.videos[props.currentIndex]?.url
+    const isPartsMode = props.mode === "parts"
+    const hasMultipleParts = isPartsMode && props.videos.length > 1
+    const refreshed = useRef(false)
     const videoRef = useRef<HTMLVideoElement>(null);
     const [speed, setSpeed] = useState(1);
     const [isRecording, setIsRecording] = useState(false)
@@ -22,14 +35,8 @@ const MatchVideoPlayer: React.FC<Props> = ({ videos, currentIndex, setCurrentInd
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const chunks = useRef<Blob[]>([]);
     const MAX_DURATION = 30_000;
-    const { isLoading: isProcessingClip, error, fetchData } = useFetchData<Blob>("POST")
-
-    if (error) {
-        console.error(error)
-        toast.error("Error al procesar el clip, inténtalo de nuevo más tarde", {
-            closeButton: true
-        })
-    }
+    const { isLoading: isProcessingClip, fetchData, lastErrorRef } = useFetchData<Blob>("POST")
+    const [clipToken, setClipToken] = useState("")
 
     const getVideoStream = (video: any): MediaStream | null => {
         if (typeof video.captureStream === "function") {
@@ -122,9 +129,19 @@ const MatchVideoPlayer: React.FC<Props> = ({ videos, currentIndex, setCurrentInd
     };
 
     const handleEnded = () => {
-        if (currentIndex < videos.length - 1) {
-            setCurrentIndex(prev => prev + 1);
+        if (props.mode === "parts" && props.currentIndex < props.videos.length - 1) {
+            props.setCurrentIndex(prev => prev + 1);
         }
+    };
+
+    const handlePlaybackError = async () => {
+        if (props.mode !== "unified" || refreshed.current || !props.onRefreshUrl) {
+            toast.error("No se pudo reproducir el video.")
+            return
+        }
+        refreshed.current = true
+        const nextUrl = await props.onRefreshUrl()
+        if (!nextUrl) toast.error("No se pudo renovar el enlace del video.")
     };
 
     const changeSpeed = (value: number) => {
@@ -134,27 +151,36 @@ const MatchVideoPlayer: React.FC<Props> = ({ videos, currentIndex, setCurrentInd
     };
 
     const downloadVideo = async () => {
-        const url = videos[currentIndex];
-        const response = await fetch(url);
+        const response = await fetch(activeUrl);
         const blob = await response.blob();
 
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
-        a.download = `partido_parte_${currentIndex + 1}.mp4`;
+        a.download = props.mode === "unified" ? "partido-tu-repe.mp4" : `partido_parte_${props.currentIndex + 1}.mp4`;
         a.click();
 
         URL.revokeObjectURL(a.href);
     };
 
     const downloadClip = async (webmBlob: Blob) => {
+        if (!clipToken) {
+            toast.error("Completá el CAPTCHA para descargar el clip.")
+            return
+        }
         const file = new File([webmBlob], "clip-tu-repe.webm", {
             type: "video/webm"
         });
 
         const formData = new FormData();
         formData.append("clip", file);
+        formData.append("turnstileToken", clipToken);
 
         const mp4Blob = await fetchData(`${BACKEND_API_URL}/clips/convert`, formData)
+        setClipToken("")
+        if (!mp4Blob) {
+            toast.error(userFacingError(lastErrorRef.current, "No se pudo procesar el clip"))
+            return
+        }
 
         const url = URL.createObjectURL(mp4Blob);
 
@@ -173,10 +199,11 @@ const MatchVideoPlayer: React.FC<Props> = ({ videos, currentIndex, setCurrentInd
             <video
                 className="matchVideoPlayer"
                 ref={videoRef}
-                src={videos[currentIndex]}
+                src={activeUrl}
                 controls
                 autoPlay
                 onEnded={handleEnded}
+                onError={props.mode === "unified" ? () => { void handlePlaybackError() } : undefined}
                 crossOrigin="anonymous"
             />
             <div className="controlsContainer">
@@ -195,6 +222,36 @@ const MatchVideoPlayer: React.FC<Props> = ({ videos, currentIndex, setCurrentInd
                         </button>
                     ))}
                 </div>
+                {hasMultipleParts && (
+                    <div className="partNavigation" aria-label="Navegación entre partes">
+                        <Button
+                            margin="0"
+                            onClick={() => props.setCurrentIndex((index) => index - 1)}
+                            backgroundColor="white"
+                            color="#1c67ba"
+                            border="1px solid #1c67ba"
+                            padding="8px 12px"
+                            fontSize="14px"
+                            disabled={props.currentIndex === 0}
+                        >
+                            Parte anterior
+                        </Button>
+                        <span className="partNavigationLabel">
+                            Parte {props.currentIndex + 1} de {props.videos.length}
+                        </span>
+                        <Button
+                            margin="0"
+                            onClick={() => props.setCurrentIndex((index) => index + 1)}
+                            backgroundColor="#1c67ba"
+                            color="white"
+                            padding="8px 12px"
+                            fontSize="14px"
+                            disabled={props.currentIndex >= props.videos.length - 1}
+                        >
+                            Parte siguiente
+                        </Button>
+                    </div>
+                )}
                 <div className="downloadControl">
                     <Button
                         margin="0"
@@ -211,7 +268,7 @@ const MatchVideoPlayer: React.FC<Props> = ({ videos, currentIndex, setCurrentInd
                             />
                         }
                     >
-                        Descargar Parte {currentIndex + 1}
+                        {props.mode === "unified" ? "Descargar partido" : `Descargar Parte ${props.currentIndex + 1}`}
                     </Button>
                     <Button
                         margin="0"
@@ -269,6 +326,7 @@ const MatchVideoPlayer: React.FC<Props> = ({ videos, currentIndex, setCurrentInd
                                 />
                                 <h3 className="controlsClipsTitle">Clip grabado correctamente</h3>
                             </div>
+                            <TurnstileWidget onToken={setClipToken} />
                             <Button
                                 padding=".5rem"
                                 onClick={() => {
@@ -278,6 +336,7 @@ const MatchVideoPlayer: React.FC<Props> = ({ videos, currentIndex, setCurrentInd
                                 }}
                                 backgroundColor="#28a745"
                                 color="white"
+                                disabled={!clipToken}
                                 icon={
                                     <DownloadIcon
                                         width={20}

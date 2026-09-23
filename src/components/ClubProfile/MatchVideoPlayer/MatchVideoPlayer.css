@@ -7,6 +7,8 @@
     display: flex;
     justify-content: space-between;
     gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .speedControls {
@@ -31,6 +33,28 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.partNavigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #d7e7fb;
+    border-radius: 999px;
+    background: #f6faff;
+}
+
+.partNavigationLabel {
+    min-width: 120px;
+    text-align: center;
+    color: #1c67ba;
+    font-size: 0.9rem;
+    font-weight: 600;
 }
 
 .controlsClips {
@@ -94,6 +118,10 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
+    }
+
+    .downloadControl {
+        justify-content: center;
     }
 }
 

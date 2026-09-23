@@ -1,0 +1,25 @@
+name: ci
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+        env:
+          VITE_BACKEND_API_URL: /api
+          VITE_DEFAULT_COVER_IMAGE_URL: https://example.com/cover.webp
+          VITE_DEFAULT_PROFILE_IMAGE_URL: https://example.com/logo.webp
+          VITE_TURNSTILE_SITE_KEY: 1x00000000000000000000AA
+      - run: npm run security:audit

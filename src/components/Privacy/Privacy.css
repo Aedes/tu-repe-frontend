@@ -1,0 +1,12 @@
+.privacyPage {
+    min-height: 100vh;
+    background: #edfafd;
+}
+.privacyContent {
+    max-width: 720px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 12px;
+    line-height: 1.5;
+}

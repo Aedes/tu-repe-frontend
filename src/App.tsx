@@ -8,6 +8,7 @@ import AdminInterface from './components/AdminRoute/AdminInterface/AdminInterfac
 import LoginAdmin from './components/LoginAdmin/LoginAdmin'
 import UserRoute from './components/UserRoute/UserRoute'
 import UserInterface from './components/UserRoute/UserInterface/UserInterface'
+import Privacy from './components/Privacy/Privacy'
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
               }
             />
             <Route path='/login-user' element={<LoginAdmin baseUrl='user' />} />
+            <Route path='/privacidad' element={<Privacy />} />
           </Routes>
         </main>
       </BrowserRouter>

@@ -1,7 +1,10 @@
+import { useState } from "react";
 import Button from "../../../../common/Button/Button";
 import { PlusIcon, CameraIcon, PencilIcon, CameraOffIcon, CopyIcon } from "../../../../../assets/Icons";
 import { useAdminActions } from "../../../../../hooks/useAdminActions";
 import { toast } from "sonner";
+
+type PublishTarget = { cameraPath: string; streamKey: string }
 
 const CourtsAndData = () => {
 
@@ -14,6 +17,8 @@ const CourtsAndData = () => {
         setEditedClubData,
         handleUpdateClub,
         handleDeleteCourt,
+        handleRotateStreamKey,
+        handleRevealPublishTarget,
         setCourtToEdit,
         resetCourtFormData,
         setIsOpenCourtForm,
@@ -21,6 +26,8 @@ const CourtsAndData = () => {
         resetSelectedClub,
         handleDeleteClub,
     } = useAdminActions()
+
+    const [publishTargets, setPublishTargets] = useState<Record<string, PublishTarget>>({})
 
     const handleOpenCourtForm = (court?: typeof courtToEdit) => {
         if (court) {
@@ -47,6 +54,29 @@ const CourtsAndData = () => {
     const copyToClipboard = () => {
         navigator.clipboard.writeText(`https://turepe.aedestec.com/c/${editedClubData?.urlId}`);
         toast.success("¡Link copiado!")
+    }
+
+    const rememberPublishTarget = (courtId: string, target: PublishTarget) => {
+        setPublishTargets((current) => ({ ...current, [courtId]: target }))
+    }
+
+    const handleCopyPublishTarget = async (courtId: string) => {
+        const target = await handleRevealPublishTarget(courtId)
+        if (!target) return
+        rememberPublishTarget(courtId, target)
+        const url = `rtmp://IP_DE_TU_MAC:1935/${target.cameraPath}`
+        await navigator.clipboard.writeText(url)
+        toast.success("URL RTMP copiada. Reemplazá IP_DE_TU_MAC por la IP de esta computadora.", { duration: 8000 })
+    }
+
+    const handleRotateAndShow = async (courtId: string) => {
+        const response = await handleRotateStreamKey(courtId)
+        if (response && response.cameraPath && response.streamKey) {
+            rememberPublishTarget(courtId, {
+                cameraPath: response.cameraPath,
+                streamKey: response.streamKey,
+            })
+        }
     }
 
     if (!selectedClub || !editedClubData) return null
@@ -92,6 +122,20 @@ const CourtsAndData = () => {
                                             <PencilIcon width={16} height={16} fill="#0077b6" />
                                         </button>
                                         <button
+                                            className="editCourtButton"
+                                            onClick={() => handleCopyPublishTarget(`${court.id}`)}
+                                            title="Copiar URL RTMP"
+                                        >
+                                            <CopyIcon width={16} height={16} fill="#0077b6" />
+                                        </button>
+                                        <button
+                                            className="editCourtButton"
+                                            onClick={() => handleRotateAndShow(`${court.id}`)}
+                                            title="Rotar stream key"
+                                        >
+                                            ↻
+                                        </button>
+                                        <button
                                             className="deleteCourtButton"
                                             onClick={() => handleDeleteCourt(`${court.id}`)}
                                             title="Eliminar cancha"
@@ -105,10 +149,20 @@ const CourtsAndData = () => {
                                         <span className="courtDetailLabel">Host de cámara:</span>
                                         <span className="courtDetailValue">{court.cameraHost}</span>
                                     </div>
-                                    <div className="courtDetailItem">
-                                        <span className="courtDetailLabel">Ruta:</span>
-                                        <span className="courtDetailValue">{court.cameraPath}</span>
+                                    <div className="courtDetailItem courtPublishTarget">
+                                        <span className="courtDetailLabel">Ruta RTMP:</span>
+                                        <span className="courtDetailValue courtPublishValue">
+                                            {(publishTargets[`${court.id}`]?.cameraPath || court.cameraPath) ?? "Todavía no consultada"}
+                                        </span>
                                     </div>
+                                    {(publishTargets[`${court.id}`]?.streamKey || court.streamKey) && (
+                                        <div className="courtDetailItem courtPublishTarget">
+                                            <span className="courtDetailLabel">Clave:</span>
+                                            <span className="courtDetailValue courtPublishValue">
+                                                {publishTargets[`${court.id}`]?.streamKey || court.streamKey}
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         ))}
@@ -218,7 +272,7 @@ const CourtsAndData = () => {
                 <div className="divInputClubInfo">
                     <label>Descripción:</label>
                     <textarea
-                        value={editedClubData.description}
+                        value={editedClubData.description ?? ""}
                         onChange={(e) => setEditedClubData({ ...editedClubData, description: e.target.value })}
                     />
                 </div>
@@ -227,7 +281,7 @@ const CourtsAndData = () => {
                         <label>Teléfono del club:</label>
                         <input
                             type="text"
-                            value={editedClubData.phone}
+                            value={editedClubData.phone ?? ""}
                             onChange={(e) => setEditedClubData({ ...editedClubData, phone: e.target.value })}
                         />
                     </div>
@@ -235,7 +289,7 @@ const CourtsAndData = () => {
                         <label>Instagram del club:</label>
                         <input
                             type="text"
-                            value={editedClubData.instagramHandle}
+                            value={editedClubData.instagramHandle ?? ""}
                             onChange={(e) => setEditedClubData({ ...editedClubData, instagramHandle: e.target.value })}
                         />
                     </div>

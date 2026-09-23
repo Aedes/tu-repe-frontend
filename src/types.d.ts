@@ -15,9 +15,9 @@ export interface IClub {
     city: string;
     address: string;
     urlId: string,
-    phone?: string;
-    instagramHandle?: string;
-    description?: string;
+    phone?: string | null;
+    instagramHandle?: string | null;
+    description?: string | null;
     profileImageUrl?: string;
     coverImageUrl?: string;
     profileImagePublicId?: string;
@@ -27,10 +27,11 @@ export interface IClub {
 
 export interface ICourt {
     id?: string;
-    clubId: number;
+    clubId?: number;
     name: string;
-    cameraHost: string;
-    cameraPath: string;
+    cameraHost?: string;
+    cameraPath?: string;
+    streamKey?: string;
 }
 
 export interface IVideo {

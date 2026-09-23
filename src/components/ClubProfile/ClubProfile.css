@@ -192,6 +192,46 @@
     padding: 0 2rem 2rem 2rem;
 }
 
+.videoModeOptions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    padding: 0 2rem 1.5rem 2rem;
+}
+
+.videoModeOption {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.25rem 0.75rem;
+    align-items: start;
+    padding: 1rem;
+    border: 1px solid lightgrey;
+    border-radius: 8px;
+    cursor: pointer;
+    color: black;
+    background-color: white;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.videoModeOption.selected {
+    border-color: var(--color-primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.videoModeOption input {
+    margin-top: 0.25rem;
+}
+
+.videoModeTitle {
+    font-weight: 700;
+}
+
+.videoModeDescription {
+    grid-column: 2;
+    color: grey;
+    font-size: 0.95rem;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -255,6 +295,31 @@
     color: grey;
 }
 
+.matchVideoPreparing {
+    margin: 0 2rem 2rem 2rem;
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    background: white;
+    border-radius: 0.5rem;
+    text-align: center;
+}
+
+.matchPreparingSpinner {
+    width: 36px;
+    height: 36px;
+    border: 4px solid #d9d9d9;
+    border-top-color: var(--color-primary, #0077b6);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
 .clubProfileItems.mobile {
     display: none;
 }
@@ -303,6 +368,11 @@
 }
 
 @media (max-width: 660px) {
+    .videoModeOptions {
+        grid-template-columns: 1fr;
+        padding: 0 1rem 1.5rem 1rem;
+    }
+
     .clubProfileLogoAndName {
         margin: 0 1rem;
     }
