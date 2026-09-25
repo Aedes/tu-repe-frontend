@@ -68,6 +68,12 @@
     color: #28a745;
 }
 
+.clipError {
+    margin: 0;
+    text-align: center;
+    color: #b42318;
+}
+
 .tileAndIconContainer {
     display: flex;
     align-items: center;

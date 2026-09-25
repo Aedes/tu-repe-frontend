@@ -5,11 +5,14 @@ import ClubProfile from "./ClubProfile"
 import { argentinaLocalToUtcIso } from "../../utils/argentinaTime"
 
 const startRender = vi.fn()
-let ui: { phase: string; job?: { videoUrl?: string; jobId?: string; reason?: string; parts?: { url: string; startTime: string; endTime: string }[] }; error?: Error } = { phase: "idle" }
+const chooseParts = vi.fn()
+const dismissChoice = vi.fn()
+const playerProps = vi.hoisted(() => ({ current: null as null | Record<string, unknown> }))
+let ui: { phase: string; job?: { videoUrl?: string; jobId?: string; reason?: string; notice?: string; continuationToken?: string; startTime?: string; endTime?: string; playbackStartTime?: string; parts?: { url: string; startTime: string; endTime: string }[] }; error?: Error } = { phase: "idle" }
 
 vi.mock("sonner", () => ({ toast: { error: vi.fn(), success: vi.fn(), info: vi.fn() } }))
 vi.mock("../../hooks/useMatchVideoRender", () => ({
-    useMatchVideoRender: () => ({ ui, startRender, refreshUrl: vi.fn() }),
+    useMatchVideoRender: () => ({ ui, startRender, refreshUrl: vi.fn(), chooseParts, dismissChoice }),
 }))
 vi.mock("../../hooks/useFetchData", () => ({
     useFetchData: () => ({
@@ -38,7 +41,10 @@ vi.mock("../common/TurnstileWidget/TurnstileWidget", () => ({
     ),
 }))
 vi.mock("./MatchVideoPlayer/MatchVideoPlayer", () => ({
-    default: (props: { mode: string }) => <div>player-{props.mode}</div>,
+    default: (props: { mode: string }) => {
+        playerProps.current = props
+        return <div>player-{props.mode}</div>
+    },
 }))
 
 const renderProfile = () => render(
@@ -53,6 +59,8 @@ describe("ClubProfile", () => {
     beforeEach(() => {
         ui = { phase: "idle" }
         startRender.mockReset()
+        chooseParts.mockReset()
+        dismissChoice.mockReset()
         startRender.mockResolvedValue("ok")
     })
 
@@ -64,7 +72,7 @@ describe("ClubProfile", () => {
         const day = (selects[1].querySelectorAll("option")[1] as HTMLOptionElement).value
         fireEvent.change(selects[1], { target: { value: day } })
         fireEvent.change(selects[2], { target: { value: "08:00" } })
-        const button = screen.getByRole("button", { name: /Ver por partes/ })
+        const button = screen.getByRole("button", { name: /Buscar partido/ })
         expect(button).toBeDisabled()
         fireEvent.click(screen.getByText("captcha"))
         fireEvent.click(button)
@@ -72,7 +80,7 @@ describe("ClubProfile", () => {
             turnstileToken: "captcha-token",
             courtId: "court-1",
             startTime: argentinaLocalToUtcIso(day, "08:00"),
-            mode: "parts",
+            mode: "assess",
         })))
         await waitFor(() => expect(button).toBeDisabled())
     })
@@ -115,6 +123,102 @@ describe("ClubProfile", () => {
                 <Routes><Route path="/c/:clubUrlId" element={<ClubProfile />} /></Routes>
             </MemoryRouter>
         )
-        expect(await screen.findByText(/No encontramos ningún partido/)).toBeInTheDocument()
+        expect(await screen.findByText(/No encontramos grabaciones/)).toBeInTheDocument()
+    })
+
+    it("pasa al reproductor el turno devuelto por el backend", async () => {
+        const { rerender } = renderProfile()
+        await screen.findByText("Club Test")
+        fireEvent.change(document.querySelectorAll("select")[0], { target: { value: "court-1" } })
+        ui = {
+            phase: "ready",
+            job: {
+                videoUrl: "https://videos.test/full.mp4",
+                startTime: "2026-01-01T18:00:00.000Z",
+                endTime: "2026-01-01T18:30:00.000Z",
+                playbackStartTime: "2026-01-01T17:58:00.000Z",
+            },
+        }
+        rerender(
+            <MemoryRouter initialEntries={["/c/cluburl01"]}>
+                <Routes><Route path="/c/:clubUrlId" element={<ClubProfile />} /></Routes>
+            </MemoryRouter>
+        )
+        expect(await screen.findByText("player-unified")).toBeInTheDocument()
+        expect(playerProps.current).toMatchObject({
+            mode: "unified",
+            clubUrlId: "cluburl01",
+            courtId: "court-1",
+            appointmentStartTime: "2026-01-01T18:00:00.000Z",
+            appointmentEndTime: "2026-01-01T18:30:00.000Z",
+            playbackStartTime: "2026-01-01T17:58:00.000Z",
+        })
+        expect(screen.getByText(/Marcá el inicio con Grabar Clip/)).toBeInTheDocument()
+
+        ui = {
+            phase: "parts",
+            job: {
+                startTime: "2026-01-01T18:00:00.000Z",
+                endTime: "2026-01-01T18:30:00.000Z",
+                parts: [{ url: "https://videos.test/1.mp4", startTime: "2026-01-01T18:00:00.000Z", endTime: "2026-01-01T18:15:00.000Z" }],
+            },
+        }
+        rerender(
+            <MemoryRouter initialEntries={["/c/cluburl01"]}>
+                <Routes><Route path="/c/:clubUrlId" element={<ClubProfile />} /></Routes>
+            </MemoryRouter>
+        )
+        expect(playerProps.current).toMatchObject({
+            mode: "parts",
+            appointmentStartTime: "2026-01-01T18:00:00.000Z",
+            appointmentEndTime: "2026-01-01T18:30:00.000Z",
+        })
+    })
+
+    it("ofrece video completo solo después de una búsqueda compatible", async () => {
+        const { rerender } = renderProfile()
+        await screen.findByText("Club Test")
+        fireEvent.change(document.querySelectorAll("select")[0], { target: { value: "court-1" } })
+        ui = {
+            phase: "choice",
+            job: {
+                continuationToken: "cont-token",
+                startTime: "2026-01-01T18:00:00.000Z",
+                endTime: "2026-01-01T18:30:00.000Z",
+                parts: [{ url: "https://videos.test/1.mp4", startTime: "a", endTime: "b" }],
+            },
+        }
+        rerender(
+            <MemoryRouter initialEntries={["/c/cluburl01"]}>
+                <Routes><Route path="/c/:clubUrlId" element={<ClubProfile />} /></Routes>
+            </MemoryRouter>
+        )
+        expect(screen.queryByRole("radio")).not.toBeInTheDocument()
+        fireEvent.click(screen.getByRole("button", { name: "Ver ahora por partes" }))
+        expect(chooseParts).toHaveBeenCalled()
+        fireEvent.click(screen.getByRole("button", { name: "Preparar video completo" }))
+        expect(startRender).toHaveBeenCalledWith(expect.objectContaining({
+            mode: "unified",
+            continuationToken: "cont-token",
+            courtId: "court-1",
+            startTime: "2026-01-01T18:00:00.000Z",
+        }))
+
+        ui = {
+            phase: "parts",
+            job: {
+                notice: "gaps",
+                startTime: "2026-01-01T18:00:00.000Z",
+                endTime: "2026-01-01T18:30:00.000Z",
+                parts: [{ url: "https://videos.test/1.mp4", startTime: "a", endTime: "b" }],
+            },
+        }
+        rerender(
+            <MemoryRouter initialEntries={["/c/cluburl01"]}>
+                <Routes><Route path="/c/:clubUrlId" element={<ClubProfile />} /></Routes>
+            </MemoryRouter>
+        )
+        expect(screen.getByText(/La grabación tiene interrupciones y se mostrará por partes/)).toBeInTheDocument()
+        expect(screen.queryByRole("button", { name: "Preparar video completo" })).not.toBeInTheDocument()
     })
 })

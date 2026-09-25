@@ -192,44 +192,101 @@
     padding: 0 2rem 2rem 2rem;
 }
 
-.videoModeOptions {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-    padding: 0 2rem 1.5rem 2rem;
+.matchChoice {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: min(34rem, calc(100vw - 3.5rem));
+    color: black;
 }
 
-.videoModeOption {
+.matchChoiceHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding-right: 1.75rem;
+}
+
+.matchChoiceHeader h3 {
+    margin: 0;
+    font-size: 1.35rem;
+}
+
+.matchChoiceHeader p {
+    margin: 0.2rem 0 0;
+    color: grey;
+    font-size: 0.95rem;
+}
+
+.matchChoiceActions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.matchChoiceOption {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: 0.25rem 0.75rem;
-    align-items: start;
+    column-gap: 0.85rem;
+    row-gap: 0.45rem;
+    align-items: center;
+    text-align: left;
     padding: 1rem;
     border: 1px solid lightgrey;
-    border-radius: 8px;
+    border-radius: 10px;
+    background: white;
     cursor: pointer;
     color: black;
-    background-color: white;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.videoModeOption.selected {
+.matchChoiceOptionPrimary {
     border-color: var(--color-primary);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    background: linear-gradient(to right, var(--color-bg), white);
 }
 
-.videoModeOption input {
-    margin-top: 0.25rem;
+.matchChoiceOption:hover,
+.matchChoiceOption:focus-visible {
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.videoModeTitle {
+.matchChoiceIcon {
+    grid-row: span 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    background-color: var(--color-secondary);
+}
+
+.matchChoiceCopy {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.matchChoiceTitle {
     font-weight: 700;
+    font-size: 1rem;
 }
 
-.videoModeDescription {
-    grid-column: 2;
+.matchChoiceDescription {
     color: grey;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
+    line-height: 1.35;
+}
+
+.matchChoiceMeta {
+    justify-self: start;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background-color: var(--color-secondary);
+    color: var(--color-primary);
+    font-size: 0.75rem;
+    font-weight: 700;
 }
 
 @keyframes fadeIn {
@@ -368,11 +425,6 @@
 }
 
 @media (max-width: 660px) {
-    .videoModeOptions {
-        grid-template-columns: 1fr;
-        padding: 0 1rem 1.5rem 1rem;
-    }
-
     .clubProfileLogoAndName {
         margin: 0 1rem;
     }

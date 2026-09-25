@@ -1,26 +1,50 @@
-import React, { useRef, useState, type SetStateAction } from "react";
+import React, { useEffect, useRef, useState, type SetStateAction } from "react";
 import "./MatchVideoPlayer.css"
 import Button from "../../common/Button/Button";
 import { DownloadIcon, StartRecordingIcon, StopRecordingIcon, CheckIcon } from "../../../assets/Icons";
 import Modal from "../../common/Modal/Modal";
 import { toast } from "sonner";
+import { ApiError } from "../../../api/http";
 import { userFacingError } from "../../../api/errorMessage";
 import { BACKEND_API_URL } from "../../../config";
 import { useFetchData } from "../../../hooks/useFetchData";
 import TurnstileWidget from "../../common/TurnstileWidget/TurnstileWidget";
+import { ClipTimelineError, clipOffsetMs } from "../../../utils/clipTimeline";
+
+const MAX_DURATION_MS = 30_000;
+const MIN_DURATION_MS = 1_000;
 
 type VideoPart = { url: string; startTime: string; endTime: string }
 
-type Props = {
+type ClipContext = {
+    clubUrlId: string
+    courtId: string
+    appointmentStartTime: string
+    appointmentEndTime: string
+}
+
+type PendingClip = { offsetMs: number; durationMs: number }
+
+type ClipExtractRequest = {
+    clubUrlId: string
+    courtId: string
+    appointmentStartTime: string
+    offsetMs: number
+    durationMs: number
+    turnstileToken: string
+}
+
+type Props = ClipContext & ({
     mode: "unified"
     videoUrl: string
+    playbackStartTime: string
     onRefreshUrl?: () => Promise<string | null>
 } | {
     mode: "parts"
     videos: VideoPart[]
     currentIndex: number
     setCurrentIndex: React.Dispatch<SetStateAction<number>>
-}
+})
 
 const MatchVideoPlayer: React.FC<Props> = (props) => {
     const activeUrl = props.mode === "unified" ? props.videoUrl : props.videos[props.currentIndex]?.url
@@ -28,110 +52,156 @@ const MatchVideoPlayer: React.FC<Props> = (props) => {
     const hasMultipleParts = isPartsMode && props.videos.length > 1
     const refreshed = useRef(false)
     const videoRef = useRef<HTMLVideoElement>(null);
+    const startOffsetRef = useRef<number | null>(null)
+    const selectingRef = useRef(false)
+    const finalizingRef = useRef(false)
     const [speed, setSpeed] = useState(1);
     const [isRecording, setIsRecording] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
-    const [blob, setBlob] = useState<Blob | null>(null)
-    const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-    const chunks = useRef<Blob[]>([]);
-    const MAX_DURATION = 30_000;
-    const { isLoading: isProcessingClip, fetchData, lastErrorRef } = useFetchData<Blob>("POST")
+    const [pendingRange, setPendingRange] = useState<PendingClip | null>(null)
+    const [clipError, setClipError] = useState<string | null>(null)
+    const [captchaKey, setCaptchaKey] = useState(0)
+    const { isLoading: isProcessingClip, fetchData, lastErrorRef } = useFetchData<Blob, ClipExtractRequest>("POST")
     const [clipToken, setClipToken] = useState("")
 
-    const getVideoStream = (video: any): MediaStream | null => {
-        if (typeof video.captureStream === "function") {
-            return video.captureStream();
+    useEffect(() => {
+        selectingRef.current = false
+        finalizingRef.current = false
+        startOffsetRef.current = null
+        setIsRecording(false)
+        setPendingRange(null)
+        setClipToken("")
+        setClipError(null)
+        setIsOpen(false)
+    }, [props.appointmentStartTime, props.appointmentEndTime, props.courtId, props.clubUrlId])
+
+    const readOffset = () => {
+        const video = videoRef.current
+        const currentTimeSeconds = video?.currentTime ?? Number.NaN
+        if (props.mode === "unified") {
+            const playbackStart = Date.parse(props.playbackStartTime)
+            const durationMs = video && Number.isFinite(video.duration) && video.duration > 0 ? video.duration * 1000 : Number.NaN
+            const mediaEndTime = Number.isFinite(playbackStart) && Number.isFinite(durationMs)
+                ? new Date(playbackStart + durationMs).toISOString()
+                : undefined
+            return clipOffsetMs({
+                mode: "unified",
+                currentTimeSeconds,
+                appointmentStartTime: props.appointmentStartTime,
+                playbackStartTime: props.playbackStartTime,
+                mediaEndTime,
+            })
         }
+        const part = props.videos[props.currentIndex]
+        return clipOffsetMs({
+            mode: "parts",
+            currentTimeSeconds,
+            appointmentStartTime: props.appointmentStartTime,
+            partStartTime: part?.startTime,
+            mediaEndTime: part?.endTime,
+        })
+    }
 
-        if (typeof video.mozCaptureStream === "function") {
-            return video.mozCaptureStream();
-        }
-
-        return null;
-    };
-
-    const removeAudioTrack = (stream: MediaStream) => {
-        const videoTracks = stream.getVideoTracks();
-        return new MediaStream(videoTracks);
-    };
-
-    const getSupportedMimeType = () => {
-        const types = [
-            "video/webm; codecs=vp9",
-            "video/webm; codecs=vp8",
-            "video/webm",
-        ];
-
-        return types.find(type => MediaRecorder.isTypeSupported(type));
-    };
+    const resetSelection = () => {
+        selectingRef.current = false
+        finalizingRef.current = false
+        startOffsetRef.current = null
+        setIsRecording(false)
+    }
 
     const startRecording = async () => {
-        toast.success("Grabando clip...")
-        setIsRecording(true)
+        if (selectingRef.current) return
+        let offset = 0
         try {
-            if (!videoRef.current) return;
-
-            if (videoRef.current.paused) {
-                await videoRef.current.play();
-            }
-
-            const stream = getVideoStream(videoRef.current);
-
-            if (!stream) {
-                toast.error("La grabación no es compatible con este navegador.");
-                return;
-            }
-
-            const videoOnlyStream = removeAudioTrack(stream)
-
-            const mimeType = getSupportedMimeType();
-
-            if (!mimeType) {
-                toast.error("Tu navegador no soporta grabación de video 😕");
-                return;
-            }
-
-            const mediaRecorder = new MediaRecorder(videoOnlyStream, { mimeType });
-
-            chunks.current = [];
-
-            mediaRecorder.ondataavailable = e => {
-                if (e.data.size > 0) chunks.current.push(e.data);
-            };
-
-            mediaRecorder.onstop = () => {
-                const blob = new Blob(chunks.current, { type: "video/webm" });
-                setBlob(blob)
-            };
-
-            mediaRecorder.start();
-            setTimeout(() => {
-                if (mediaRecorder.state === "recording") {
-                    stopRecording();
-                }
-            }, MAX_DURATION);
-            mediaRecorderRef.current = mediaRecorder;
+            offset = readOffset()
         } catch (error) {
-            console.error("Error starting recording:", error);
-            setIsRecording(false)
-            toast.error("Ocurrió un error al iniciar la grabación.");
+            toast.error(error instanceof ClipTimelineError ? error.message : "No se pudo marcar el clip.")
+            return
         }
-    };
+        const video = videoRef.current
+        if (!video) return
+        startOffsetRef.current = offset
+        selectingRef.current = true
+        finalizingRef.current = false
+        setIsRecording(true)
+        setClipError(null)
+        toast.success("Grabando clip...")
+        if (video.paused) {
+            try {
+                await video.play()
+            } catch {
+                toast.error("No se pudo reproducir el video, pero el inicio del clip quedó marcado.")
+            }
+        }
+    }
 
-    const stopRecording = () => {
-        setIsRecording(false)
-        toast.info("Grabación detenida")
-        mediaRecorderRef.current?.stop();
-        if (videoRef.current) {
-            videoRef.current.pause();
+    const finalizeClip = (forcedDurationMs?: number) => {
+        if (!selectingRef.current || startOffsetRef.current === null || finalizingRef.current) return
+        finalizingRef.current = true
+        const startOffsetMs = startOffsetRef.current
+        let durationMs = forcedDurationMs
+        if (durationMs === undefined) {
+            let endOffset = startOffsetMs
+            try {
+                endOffset = readOffset()
+            } catch (error) {
+                resetSelection()
+                toast.error(error instanceof ClipTimelineError ? error.message : "No se pudo marcar el final del clip.")
+                return
+            }
+            if (endOffset <= startOffsetMs) {
+                resetSelection()
+                toast.error("El final del clip quedó antes del inicio. Volvé a marcarlo.")
+                return
+            }
+            durationMs = Math.min(endOffset - startOffsetMs, MAX_DURATION_MS)
         }
+        if (durationMs < MIN_DURATION_MS) {
+            resetSelection()
+            toast.error("El clip tiene que durar al menos 1 segundo.")
+            return
+        }
+        selectingRef.current = false
+        setIsRecording(false)
+        videoRef.current?.pause()
+        setPendingRange({ offsetMs: startOffsetMs, durationMs })
+        setClipToken("")
+        setClipError(null)
+        setCaptchaKey((value) => value + 1)
         setIsOpen(true)
-    };
+    }
+
+    const remainingInMedia = () => {
+        const appointmentStart = Date.parse(props.appointmentStartTime)
+        const startOffset = startOffsetRef.current ?? 0
+        if (!Number.isFinite(appointmentStart)) return 0
+        if (props.mode === "parts") {
+            const end = Date.parse(props.videos[props.currentIndex]?.endTime ?? "")
+            if (!Number.isFinite(end)) return 0
+            return Math.max(0, end - appointmentStart - startOffset)
+        }
+        const video = videoRef.current
+        const playbackStart = Date.parse(props.playbackStartTime)
+        if (!video || !Number.isFinite(video.duration) || video.duration <= 0 || !Number.isFinite(playbackStart)) return 0
+        return Math.max(0, playbackStart + video.duration * 1000 - appointmentStart - startOffset)
+    }
+
+    const handleTimeUpdate = () => {
+        if (!selectingRef.current || startOffsetRef.current === null) return
+        try {
+            const currentOffset = readOffset()
+            if (currentOffset - startOffsetRef.current >= MAX_DURATION_MS) finalizeClip(MAX_DURATION_MS)
+        } catch {
+            finalizeClip(Math.min(MAX_DURATION_MS, remainingInMedia()))
+        }
+    }
 
     const handleEnded = () => {
         if (props.mode === "parts" && props.currentIndex < props.videos.length - 1) {
             props.setCurrentIndex(prev => prev + 1);
+            return
         }
+        if (selectingRef.current) finalizeClip()
     };
 
     const handlePlaybackError = async () => {
@@ -162,36 +232,47 @@ const MatchVideoPlayer: React.FC<Props> = (props) => {
         URL.revokeObjectURL(a.href);
     };
 
-    const downloadClip = async (webmBlob: Blob) => {
+    const downloadClip = async () => {
+        if (!pendingRange) {
+            toast.error("Volvé a marcar el clip.")
+            return
+        }
         if (!clipToken) {
             toast.error("Completá el CAPTCHA para descargar el clip.")
             return
         }
-        const file = new File([webmBlob], "clip-tu-repe.webm", {
-            type: "video/webm"
-        });
-
-        const formData = new FormData();
-        formData.append("clip", file);
-        formData.append("turnstileToken", clipToken);
-
-        const mp4Blob = await fetchData(`${BACKEND_API_URL}/clips/convert`, formData)
+        setClipError(null)
+        const mp4Blob = await fetchData(`${BACKEND_API_URL}/clips/extract`, {
+            clubUrlId: props.clubUrlId,
+            courtId: props.courtId,
+            appointmentStartTime: props.appointmentStartTime,
+            offsetMs: pendingRange.offsetMs,
+            durationMs: pendingRange.durationMs,
+            turnstileToken: clipToken,
+        })
         setClipToken("")
+        setCaptchaKey((value) => value + 1)
         if (!mp4Blob) {
-            toast.error(userFacingError(lastErrorRef.current, "No se pudo procesar el clip"))
+            const failure = lastErrorRef.current
+            setClipError(userFacingError(failure, "No se pudo generar el clip"))
+            if (failure instanceof ApiError && failure.code === "INVALID_CLIP_RANGE") {
+                setPendingRange(null)
+            }
             return
         }
 
         const url = URL.createObjectURL(mp4Blob);
-
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "clip-tu-repe.mp4";
-        a.click();
-
-        URL.revokeObjectURL(url);
+        try {
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "clip-tu-repe.mp4";
+            a.click();
+        } finally {
+            URL.revokeObjectURL(url);
+        }
+        setPendingRange(null)
         setIsOpen(false)
-        toast.success("Clip procesado")
+        toast.success("Clip generado")
     }
 
     return (
@@ -203,6 +284,7 @@ const MatchVideoPlayer: React.FC<Props> = (props) => {
                 controls
                 autoPlay
                 onEnded={handleEnded}
+                onTimeUpdate={handleTimeUpdate}
                 onError={props.mode === "unified" ? () => { void handlePlaybackError() } : undefined}
                 crossOrigin="anonymous"
             />
@@ -232,7 +314,7 @@ const MatchVideoPlayer: React.FC<Props> = (props) => {
                             border="1px solid #1c67ba"
                             padding="8px 12px"
                             fontSize="14px"
-                            disabled={props.currentIndex === 0}
+                            disabled={isRecording || props.currentIndex === 0}
                         >
                             Parte anterior
                         </Button>
@@ -246,7 +328,7 @@ const MatchVideoPlayer: React.FC<Props> = (props) => {
                             color="white"
                             padding="8px 12px"
                             fontSize="14px"
-                            disabled={props.currentIndex >= props.videos.length - 1}
+                            disabled={isRecording || props.currentIndex >= props.videos.length - 1}
                         >
                             Parte siguiente
                         </Button>
@@ -272,7 +354,7 @@ const MatchVideoPlayer: React.FC<Props> = (props) => {
                     </Button>
                     <Button
                         margin="0"
-                        onClick={startRecording}
+                        onClick={() => { void startRecording() }}
                         backgroundColor="#007bff"
                         color="#fff"
                         padding="10px 15px"
@@ -290,7 +372,7 @@ const MatchVideoPlayer: React.FC<Props> = (props) => {
                     </Button>
                     <Button
                         margin="0"
-                        onClick={stopRecording}
+                        onClick={() => finalizeClip()}
                         backgroundColor="red"
                         color="#fff"
                         padding="10px 15px"
@@ -313,7 +395,7 @@ const MatchVideoPlayer: React.FC<Props> = (props) => {
                     isProcessingClip ?
                         <div className="processingClip">
                             <div className="spinnerLoading" />
-                            <span className="processingClipTitle">Procesando clip...</span>
+                            <span className="processingClipTitle">Generando clip…</span>
                             <p className="pWait">Esto puede tardar un momento.</p>
                         </div>
                         :
@@ -324,19 +406,16 @@ const MatchVideoPlayer: React.FC<Props> = (props) => {
                                     height={32}
                                     fill="#28a745"
                                 />
-                                <h3 className="controlsClipsTitle">Clip grabado correctamente</h3>
+                                <h3 className="controlsClipsTitle">Clip seleccionado correctamente</h3>
                             </div>
-                            <TurnstileWidget onToken={setClipToken} />
+                            {clipError && <p className="clipError" role="alert">{clipError}</p>}
+                            <TurnstileWidget key={captchaKey} onToken={setClipToken} />
                             <Button
                                 padding=".5rem"
-                                onClick={() => {
-                                    if (blob) {
-                                        downloadClip(blob)
-                                    }
-                                }}
+                                onClick={() => { void downloadClip() }}
                                 backgroundColor="#28a745"
                                 color="white"
-                                disabled={!clipToken}
+                                disabled={!clipToken || !pendingRange}
                                 icon={
                                     <DownloadIcon
                                         width={20}

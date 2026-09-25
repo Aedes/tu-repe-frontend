@@ -10,7 +10,8 @@ export type RenderRequest = {
     clubUrlId: string
     courtId: string
     startTime: string
-    turnstileToken: string
+    turnstileToken?: string
+    continuationToken?: string
     mode: MatchRenderMode
 }
 
@@ -51,6 +52,7 @@ export const useMatchVideoRender = () => {
         if (gen !== generation.current) return
         if (response.status === "ready") setUi({ phase: "ready", job: response })
         else if (response.status === "parts") setUi({ phase: "parts", job: response })
+        else if (response.status === "choice") setUi({ phase: "choice", job: response })
         else if (response.status === "fallback") setUi({ phase: "fallback", job: response })
         else if (response.status === "not_found") setUi({ phase: "not_found" })
         else setUi({ phase: "polling", job: response })
@@ -73,7 +75,7 @@ export const useMatchVideoRender = () => {
             }
             const job = await readJson(response)
             apply(gen, job)
-            if (job.status === "ready" || job.status === "parts" || job.status === "fallback" || job.status === "not_found") return
+            if (job.status === "ready" || job.status === "parts" || job.status === "choice" || job.status === "fallback" || job.status === "not_found") return
             const delay = job.pollAfterMs ?? BACKOFF_MS[Math.min(attempt, BACKOFF_MS.length - 1)]
             attempt += 1
             await sleep(delay, signal)
@@ -100,7 +102,14 @@ export const useMatchVideoRender = () => {
                     "Content-Type": "application/json",
                     "X-CSRF-Token": getCookie("tu_repe_csrf"),
                 },
-                body: JSON.stringify(request),
+                body: JSON.stringify({
+                    clubUrlId: request.clubUrlId,
+                    courtId: request.courtId,
+                    startTime: request.startTime,
+                    mode: request.mode,
+                    ...(request.turnstileToken ? { turnstileToken: request.turnstileToken } : {}),
+                    ...(request.continuationToken ? { continuationToken: request.continuationToken } : {}),
+                }),
             })
             if (gen !== generation.current) return "aborted"
             if (response.status === 400) {
@@ -108,8 +117,11 @@ export const useMatchVideoRender = () => {
                 return "invalid"
             }
             if (response.status === 403) {
-                setUi({ phase: "failed", error: new ApiError(403, "Verificación anti-bot fallida") })
-                return "captcha"
+                const message = request.continuationToken
+                    ? "La búsqueda expiró. Volvé a buscar el partido."
+                    : "Verificación anti-bot fallida"
+                setUi({ phase: "failed", error: new ApiError(403, message) })
+                return request.continuationToken ? "invalid" : "captcha"
             }
             if (response.status === 429) {
                 setUi({ phase: "failed", error: new ApiError(429, "Demasiadas solicitudes", "RATE_LIMITED") })
@@ -143,5 +155,24 @@ export const useMatchVideoRender = () => {
         return job.videoUrl
     }
 
-    return { ui, startRender, refreshUrl }
+    const chooseParts = () => {
+        setUi((current) => {
+            if (current.phase !== "choice") return current
+            return {
+                phase: "parts",
+                job: {
+                    status: "parts",
+                    startTime: current.job.startTime,
+                    endTime: current.job.endTime,
+                    parts: current.job.parts,
+                },
+            }
+        })
+    }
+
+    const dismissChoice = () => {
+        setUi((current) => current.phase === "choice" ? { phase: "idle" } : current)
+    }
+
+    return { ui, startRender, refreshUrl, chooseParts, dismissChoice }
 }

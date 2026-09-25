@@ -59,7 +59,7 @@ describe("useMatchVideoRender", () => {
         expect(fetch).toHaveBeenCalledTimes(3)
     })
 
-    it("expone parts, fallback y not_found", async () => {
+    it("expone parts, choice, fallback y not_found", async () => {
         vi.mocked(fetch).mockResolvedValue(new Response(JSON.stringify({
             status: "parts",
             parts: [{ url: "https://videos.test/parte.mp4", startTime: "a", endTime: "b" }],
@@ -81,6 +81,17 @@ describe("useMatchVideoRender", () => {
         rerender(<Harness />)
         screen.getByText("buscar").click()
         await waitFor(() => expect(screen.getByTestId("phase")).toHaveTextContent("not_found"))
+
+        vi.mocked(fetch).mockResolvedValue(new Response(JSON.stringify({
+            status: "choice",
+            continuationToken: "token",
+            startTime: "2026-01-01T18:00:00.000Z",
+            endTime: "2026-01-01T19:00:00.000Z",
+            parts: [{ url: "https://videos.test/parte.mp4", startTime: "a", endTime: "b" }],
+        }), { status: 200 }))
+        rerender(<Harness />)
+        screen.getByText("buscar").click()
+        await waitFor(() => expect(screen.getByTestId("phase")).toHaveTextContent("choice"))
     })
 
     it("respeta 429 y corta al desmontar", async () => {

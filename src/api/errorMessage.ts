@@ -25,6 +25,13 @@ const translations: Record<string, string> = {
     "Upload inválido": "No se pudo subir el archivo",
     "Demasiadas solicitudes": "Demasiados intentos. Esperá un momento y probá de nuevo",
     "Cola de conversión llena": "Hay muchos clips en proceso. Probá de nuevo en un minuto",
+    "El rango del clip no es válido": "El rango del clip no es válido",
+    "No hay video para ese momento": "No hay video para ese momento del partido",
+    "Faltan fragmentos para generar ese clip": "Faltan fragmentos para generar ese clip",
+    "Hay muchos clips en proceso. Probá de nuevo en un minuto": "Hay muchos clips en proceso. Probá de nuevo en un minuto",
+    "No hay espacio suficiente para generar el clip": "No hay espacio suficiente para generar el clip",
+    "La generación del clip tardó demasiado": "La generación del clip tardó demasiado. Probá de nuevo",
+    "No se pudo generar el clip": "No se pudo generar el clip",
     "El clip no es WebM": "El clip tiene un formato que no podemos convertir",
     "El clip supera los 30 segundos": "El clip no puede durar más de 30 segundos",
     "El clip no contiene video": "El clip no contiene video",
@@ -45,6 +52,16 @@ const translations: Record<string, string> = {
     "Acción no soportada": "Esa acción no está disponible",
 }
 
+const codeTranslations: Record<string, string> = {
+    INVALID_CLIP_RANGE: "El rango del clip no es válido",
+    CLIP_NOT_FOUND: "No hay video para ese momento del partido",
+    CLIP_COVERAGE_GAP: "Faltan fragmentos para generar ese clip",
+    CLIP_QUEUE_FULL: "Hay muchos clips en proceso. Probá de nuevo en un minuto",
+    CLIP_DISK_FULL: "No hay espacio suficiente para generar el clip",
+    CLIP_PROCESSING_TIMEOUT: "La generación del clip tardó demasiado. Probá de nuevo",
+    CLIP_PROCESSING_FAILED: "No se pudo generar el clip",
+}
+
 const technical = /expected|invalid input|invalid (email|uuid|string)|too small|too big|unrecognized key|received |string must contain|^error:\s*\d+/i
 
 const join = (action: string, reason: string) => {
@@ -62,6 +79,8 @@ export const userFacingError = (error: unknown, action: string) => {
     if (status === 429 || code === "RATE_LIMITED") {
         return join(action, "Demasiados intentos. Esperá un momento y probá de nuevo")
     }
+
+    if (code && codeTranslations[code]) return join(action, codeTranslations[code])
 
     const translated = translations[raw]
     if (translated) return join(action, translated)

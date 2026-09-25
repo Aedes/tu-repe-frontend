@@ -20,14 +20,25 @@ import {
 import Button from "../common/Button/Button";
 import { CameraIcon } from "../../assets/Icons";
 import MatchVideoPlayer from "./MatchVideoPlayer/MatchVideoPlayer";
+import Modal from "../common/Modal/Modal";
 import { toast } from "sonner";
 import { userFacingError } from "../../api/errorMessage";
 import TurnstileWidget from "../common/TurnstileWidget/TurnstileWidget";
-import type { MatchRenderMode } from "../../types/matchVideo";
+import type { PartsNotice } from "../../types/matchVideo";
 import {
 	argentinaLocalToUtcIso,
 	recentArgentinaDays,
 } from "../../utils/argentinaTime";
+
+const partsLead = (notice: PartsNotice | undefined, count: number) => {
+	if (notice === "gaps") {
+		return "La grabación tiene interrupciones y se mostrará por partes.";
+	}
+	if (notice === "incompatible") {
+		return "Los fragmentos no se pueden unir en un solo video, así que se muestran por partes.";
+	}
+	return `Se muestran ${count} partes. Usá los controles del reproductor para cambiar entre fragmentos.`;
+};
 
 const ClubProfile = () => {
 	const { clubUrlId } = useParams();
@@ -45,9 +56,15 @@ const ClubProfile = () => {
 	const [turnstileToken, setTurnstileToken] = useState("");
 	const [captchaKey, setCaptchaKey] = useState(0);
 	const navigate = useNavigate();
-	const { ui: videoUi, startRender, refreshUrl } = useMatchVideoRender();
+	const {
+		ui: videoUi,
+		startRender,
+		refreshUrl,
+		chooseParts,
+		dismissChoice,
+	} = useMatchVideoRender();
 	const [currentIndex, setCurrentIndex] = useState(0);
-	const [renderMode, setRenderMode] = useState<MatchRenderMode>("parts");
+	const [playerSession, setPlayerSession] = useState(0);
 
 	useEffect(() => {
 		const fetchClubAndCourts = async () => {
@@ -91,12 +108,13 @@ const ClubProfile = () => {
 			return;
 		}
 		setCurrentIndex(0);
+		setPlayerSession((value) => value + 1);
 		const outcome = await startRender({
 			clubUrlId: clubUrlId || "",
 			courtId,
 			startTime: argentinaLocalToUtcIso(day, hour),
 			turnstileToken,
-			mode: renderMode,
+			mode: "assess",
 		});
 		if (outcome === "ok" || outcome === "captcha") {
 			setTurnstileToken("");
@@ -109,7 +127,8 @@ const ClubProfile = () => {
 			videoUi.phase !== "ready" &&
 			videoUi.phase !== "parts" &&
 			videoUi.phase !== "fallback"
-		) return;
+		)
+			return;
 		const timer = setTimeout(() => {
 			document
 				.querySelector(".matchVideoPlayerContainer")
@@ -125,6 +144,19 @@ const ClubProfile = () => {
 			);
 		}
 	}, [videoUi]);
+
+	const prepareFullVideo = () => {
+		if (videoUi.phase !== "choice") return;
+		setCurrentIndex(0);
+		setPlayerSession((value) => value + 1);
+		void startRender({
+			clubUrlId: clubUrlId || "",
+			courtId,
+			startTime: videoUi.job.startTime,
+			mode: "unified",
+			continuationToken: videoUi.job.continuationToken,
+		});
+	};
 
 	if (error) {
 		console.error(error);
@@ -381,7 +413,10 @@ const ClubProfile = () => {
 							<select
 								id="filter-court"
 								className="filter"
-								onChange={(e) => setCourtId(e.target.value)}
+								onChange={(e) => {
+									setCourtId(e.target.value);
+									dismissChoice();
+								}}
 							>
 								<option value="">
 									¿En qué cancha jugaste?
@@ -403,11 +438,17 @@ const ClubProfile = () => {
 							<select
 								id="filter-day"
 								className="filter"
-								onChange={(e) => setDay(e.target.value)}
+								onChange={(e) => {
+									setDay(e.target.value);
+									dismissChoice();
+								}}
 							>
 								<option value="">Selecciona un día</option>
 								{recentArgentinaDays().map((option) => (
-									<option key={option.value} value={option.value}>
+									<option
+										key={option.value}
+										value={option.value}
+									>
 										{option.label} ({option.weekday})
 									</option>
 								))}
@@ -423,7 +464,10 @@ const ClubProfile = () => {
 							<select
 								id="filter-hour"
 								className="filter"
-								onChange={(e) => setHour(e.target.value)}
+								onChange={(e) => {
+									setHour(e.target.value);
+									dismissChoice();
+								}}
 							>
 								<option value="">¿A qué hora?</option>
 								{(() => {
@@ -495,40 +539,6 @@ const ClubProfile = () => {
 							</select>
 						</div>
 					</div>
-					<div className="videoModeOptions">
-						<label className={`videoModeOption ${renderMode === "parts" ? "selected" : ""}`}>
-							<input
-								type="radio"
-								name="renderMode"
-								value="parts"
-								checked={renderMode === "parts"}
-								onChange={() => {
-									setRenderMode("parts");
-									setCurrentIndex(0);
-								}}
-							/>
-							<span className="videoModeTitle">Ver por partes</span>
-							<span className="videoModeDescription">
-								Más rápido. Reproduce los fragmentos disponibles uno tras otro.
-							</span>
-						</label>
-						<label className={`videoModeOption ${renderMode === "unified" ? "selected" : ""}`}>
-							<input
-								type="radio"
-								name="renderMode"
-								value="unified"
-								checked={renderMode === "unified"}
-								onChange={() => {
-									setRenderMode("unified");
-									setCurrentIndex(0);
-								}}
-							/>
-							<span className="videoModeTitle">Preparar video completo</span>
-							<span className="videoModeDescription">
-								Un solo archivo. La primera vez puede tardar varios minutos.
-							</span>
-						</label>
-					</div>
 					<div className="buttonVideoContainer">
 						<TurnstileWidget
 							key={captchaKey}
@@ -561,9 +571,7 @@ const ClubProfile = () => {
 								? "Buscando partido..."
 								: videoUi.phase === "polling"
 									? "Preparando video completo..."
-									: renderMode === "parts"
-										? "Ver por partes"
-										: "Preparar video completo"}
+									: "Buscar partido"}
 						</Button>
 					</div>
 					<div className="importantNotice">
@@ -575,6 +583,113 @@ const ClubProfile = () => {
 						</p>
 					</div>
 				</div>
+				<Modal
+					isOpen={videoUi.phase === "choice"}
+					setIsOpen={(value) => {
+						const open =
+							typeof value === "function"
+								? value(videoUi.phase === "choice")
+								: value;
+						if (!open) dismissChoice();
+					}}
+				>
+					{videoUi.phase === "choice" && (
+						<div
+							className="matchChoice"
+							role="dialog"
+							aria-modal="true"
+							aria-labelledby="match-choice-title"
+						>
+							<div className="matchChoiceHeader">
+								<div
+									className="findYourMatchIcon"
+									aria-hidden="true"
+								>
+									<PlayIcon
+										width="28"
+										height="28"
+										fill={club?.theme?.primary ?? "#0077b6"}
+									/>
+								</div>
+								<div>
+									<h3 id="match-choice-title">
+										Encontramos tu partido
+									</h3>
+									<p>
+										La grabación cubre el turno completo.
+										Elegí cómo verlo.
+									</p>
+								</div>
+							</div>
+							<div className="matchChoiceActions">
+								<button
+									type="button"
+									className="matchChoiceOption"
+									aria-label="Ver ahora por partes"
+									onClick={chooseParts}
+								>
+									<span
+										className="matchChoiceIcon"
+										aria-hidden="true"
+									>
+										<PlayIcon
+											width="22"
+											height="22"
+											fill={
+												club?.theme?.primary ??
+												"#0077b6"
+											}
+										/>
+									</span>
+									<span className="matchChoiceCopy">
+										<span className="matchChoiceTitle">
+											Ver ahora por partes
+										</span>
+										<span className="matchChoiceDescription">
+											Reproduce los fragmentos uno tras
+											otro, sin espera.
+										</span>
+									</span>
+									<span className="matchChoiceMeta">
+										Inmediato
+									</span>
+								</button>
+								<button
+									type="button"
+									className="matchChoiceOption matchChoiceOptionPrimary"
+									aria-label="Preparar video completo"
+									onClick={prepareFullVideo}
+								>
+									<span
+										className="matchChoiceIcon"
+										aria-hidden="true"
+									>
+										<CameraIcon
+											width="22"
+											height="22"
+											fill={
+												club?.theme?.primary ??
+												"#0077b6"
+											}
+										/>
+									</span>
+									<span className="matchChoiceCopy">
+										<span className="matchChoiceTitle">
+											Preparar video completo
+										</span>
+										<span className="matchChoiceDescription">
+											Un solo archivo para ver el turno
+											seguido.
+										</span>
+									</span>
+									<span className="matchChoiceMeta">
+										La primera vez puede tardar
+									</span>
+								</button>
+							</div>
+						</div>
+					)}
+				</Modal>
 				{videoUi.phase === "polling" && (
 					<div className="matchVideoPreparing animationIn">
 						<div className="matchPreparingSpinner" />
@@ -588,8 +703,8 @@ const ClubProfile = () => {
 					<div className="noVideosFoundContainer animationIn">
 						<NoVideoIcon width="20px" height="20px" fill="black" />
 						<p className="noVideosFoundText">
-							No encontramos ningún partido. Por favor, verifica
-							la cancha, fecha y hora.
+							No encontramos grabaciones para esa cancha, fecha y
+							hora.
 						</p>
 					</div>
 				)}
@@ -617,9 +732,14 @@ const ClubProfile = () => {
 							</div>
 						</div>
 						<MatchVideoPlayer
-							key={videoUi.job.jobId || videoUi.job.startTime}
+							key={`${playerSession}-${videoUi.job.jobId || videoUi.job.startTime}`}
 							mode="unified"
 							videoUrl={videoUi.job.videoUrl}
+							playbackStartTime={videoUi.job.playbackStartTime}
+							clubUrlId={clubUrlId || ""}
+							courtId={courtId}
+							appointmentStartTime={videoUi.job.startTime}
+							appointmentEndTime={videoUi.job.endTime}
 							onRefreshUrl={
 								videoUi.job.jobId
 									? () => refreshUrl(videoUi.job.jobId!)
@@ -628,9 +748,10 @@ const ClubProfile = () => {
 						/>
 						<div className="downloadInfoContainer">
 							<p className="downloadNotice">
-								Puedes grabar un clip del partido, descargarlo y
-								compartirlo con tus amigos (los clips duran como
-								máximo 30 segundos).
+								Marcá el inicio con Grabar Clip y el final con
+								Detener. El rango puede durar como máximo 30
+								segundos; después podés descargarlo y
+								compartirlo.
 							</p>
 						</div>
 					</div>
@@ -654,24 +775,32 @@ const ClubProfile = () => {
 									Tu partido por partes:{" "}
 								</h3>
 								<p className="pSlices">
-									Se muestran {videoUi.job.parts.length} partes.
-									Usá los controles del reproductor para cambiar
-									entre fragmentos. Parte {currentIndex + 1}/
+									{partsLead(
+										videoUi.job.notice,
+										videoUi.job.parts.length,
+									)}{" "}
+									Parte {currentIndex + 1}/
 									{videoUi.job.parts.length}
 								</p>
 							</div>
 						</div>
 						<MatchVideoPlayer
+							key={`${playerSession}-parts`}
 							mode="parts"
 							videos={videoUi.job.parts}
 							currentIndex={currentIndex}
 							setCurrentIndex={setCurrentIndex}
+							clubUrlId={clubUrlId || ""}
+							courtId={courtId}
+							appointmentStartTime={videoUi.job.startTime}
+							appointmentEndTime={videoUi.job.endTime}
 						/>
 						<div className="downloadInfoContainer">
 							<p className="downloadNotice">
-								Puedes grabar un clip del partido, descargarlo y
-								compartirlo con tus amigos (los clips duran como
-								máximo 30 segundos).
+								Marcá el inicio con Grabar Clip y el final con
+								Detener. El rango puede durar como máximo 30
+								segundos; después podés descargarlo y
+								compartirlo.
 							</p>
 						</div>
 					</div>
@@ -696,25 +825,32 @@ const ClubProfile = () => {
 								</h3>
 								<p className="pSlices">
 									{videoUi.job.reason === "incomplete_sources"
-										? `Faltan fragmentos, así que se muestran ${videoUi.job.parts.length} partes.`
+										? "La grabación tiene interrupciones y se mostrará por partes."
 										: `No se pudo unir el video, así que se muestran ${videoUi.job.parts.length} partes.`}{" "}
 									Usá los controles del reproductor para
 									cambiar entre fragmentos. Parte{" "}
-									{currentIndex + 1}/{videoUi.job.parts.length}
+									{currentIndex + 1}/
+									{videoUi.job.parts.length}
 								</p>
 							</div>
 						</div>
 						<MatchVideoPlayer
+							key={`${playerSession}-fallback`}
 							mode="parts"
 							videos={videoUi.job.parts}
 							currentIndex={currentIndex}
 							setCurrentIndex={setCurrentIndex}
+							clubUrlId={clubUrlId || ""}
+							courtId={courtId}
+							appointmentStartTime={videoUi.job.startTime}
+							appointmentEndTime={videoUi.job.endTime}
 						/>
 						<div className="downloadInfoContainer">
 							<p className="downloadNotice">
-								Puedes grabar un clip del partido, descargarlo y
-								compartirlo con tus amigos (los clips duran como
-								máximo 30 segundos).
+								Marcá el inicio con Grabar Clip y el final con
+								Detener. El rango puede durar como máximo 30
+								segundos; después podés descargarlo y
+								compartirlo.
 							</p>
 						</div>
 					</div>

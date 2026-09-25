@@ -1,13 +1,15 @@
-export type MatchRenderStatus = "queued" | "processing" | "ready" | "parts" | "fallback" | "not_found"
-export type MatchRenderMode = "parts" | "unified"
+export type MatchRenderStatus = "queued" | "processing" | "ready" | "parts" | "choice" | "fallback" | "not_found"
+export type MatchRenderMode = "parts" | "unified" | "assess"
+export type PartsNotice = "gaps" | "incompatible"
 
 export type VideoPart = { url: string; startTime: string; endTime: string }
 
 export type MatchRenderResponse =
-    | { status: "ready"; jobId?: string; videoUrl: string; urlExpiresAt: string; startTime: string; endTime: string }
+    | { status: "ready"; jobId?: string; videoUrl: string; urlExpiresAt: string; startTime: string; endTime: string; playbackStartTime: string }
     | { status: "queued" | "processing"; jobId: string; pollAfterMs?: number }
-    | { status: "parts"; parts: VideoPart[] }
-    | { status: "fallback"; reason: "incomplete_sources" | "merge_failed" | "merge_disabled"; jobId?: string; parts: VideoPart[] }
+    | { status: "parts"; notice?: PartsNotice; startTime: string; endTime: string; parts: VideoPart[] }
+    | { status: "choice"; continuationToken: string; startTime: string; endTime: string; parts: VideoPart[] }
+    | { status: "fallback"; reason: "incomplete_sources" | "merge_failed" | "merge_disabled"; jobId?: string; startTime: string; endTime: string; parts: VideoPart[] }
     | { status: "not_found" }
 
 export type MatchVideoUiState =
@@ -16,6 +18,7 @@ export type MatchVideoUiState =
     | { phase: "polling"; job: Extract<MatchRenderResponse, { status: "queued" | "processing" }> }
     | { phase: "ready"; job: Extract<MatchRenderResponse, { status: "ready" }> }
     | { phase: "parts"; job: Extract<MatchRenderResponse, { status: "parts" }> }
+    | { phase: "choice"; job: Extract<MatchRenderResponse, { status: "choice" }> }
     | { phase: "fallback"; job: Extract<MatchRenderResponse, { status: "fallback" }> }
     | { phase: "not_found" }
     | { phase: "failed"; error: Error }
