@@ -1,5 +1,11 @@
 import { create } from "zustand";
-import type { ClubWithCourts, IClub, ICourt, IUser } from "../types";
+import type { ClubWithCourts, IClub, ICourt, IUser, Theme } from "../types";
+
+const withoutTheme = <T extends { theme?: Theme }>(club: T) => {
+    const copy = { ...club }
+    delete copy.theme
+    return copy
+}
 
 interface UserState {
     user: Omit<IUser, "passwordHash"> | null
@@ -148,12 +154,7 @@ export const useUserStore = create<UserState>((set, get) => ({
     isClubDataChanged: () => {
         const state = get();
         if (!state.selectedClub || !state.editedClubData) return false;
-        const omitTheme = (club: any) => {
-            if (!club) return club;
-            const { theme, ...rest } = club;
-            return rest;
-        };
-        return JSON.stringify(omitTheme(state.selectedClub)) !== JSON.stringify(omitTheme(state.editedClubData));
+        return JSON.stringify(withoutTheme(state.selectedClub)) !== JSON.stringify(withoutTheme(state.editedClubData));
     },
     resetSelectedClub: () => set({
         selectedClub: null,

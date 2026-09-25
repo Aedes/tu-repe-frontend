@@ -39,7 +39,7 @@ export const useUserActions = () => {
         setCourtFormData,
     } = useUserStore()
 
-    const { isLoading: isLoadingClubsFetch, error: _errorClubsFetch, fetchData: fetchDataClubs } =
+    const { isLoading: isLoadingClubsFetch, fetchData: fetchDataClubs } =
         useFetchData<UserWithClubs>("GET");
 
     const { isLoading: isLoadingDeleteCoverFetch, fetchData: fetchDataDeleteCover, lastErrorRef: deleteCoverError } =

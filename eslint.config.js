@@ -5,6 +5,7 @@ import pluginReact from "eslint-plugin-react";
 import prettier from "eslint-config-prettier";
 
 export default [
+  { ignores: ["dist/**", "dist-ssr/**", "coverage/**"] },
   { files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"] },
   { languageOptions: { globals: globals.browser } },
   pluginJs.configs.recommended,
@@ -15,6 +16,7 @@ export default [
     settings: { react: { version: "detect" } },
     rules: {
       "react/react-in-jsx-scope": "off",
+      "react/prop-types": "off",
     },
   },
 ];

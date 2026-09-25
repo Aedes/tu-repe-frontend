@@ -2,13 +2,13 @@ import { toast } from "sonner";
 import { CameraIcon, PencilIcon, CopyIcon } from "../../../../../assets/Icons";
 import { useUserActions } from "../../../../../hooks/useUserActions";
 import Button from "../../../../common/Button/Button";
+import type { ICourt } from "../../../../../types";
 
 const CourtsAndData = () => {
 
     const {
         selectedClub,
         editedClubData,
-        courtToEdit,
         isClubDataChanged,
         setCourtToEdit,
         resetCourtFormData,
@@ -21,7 +21,7 @@ const CourtsAndData = () => {
 
     if (!selectedClub || !editedClubData) return null
 
-    const handleOpenCourtForm = (court?: typeof courtToEdit) => {
+    const handleOpenCourtForm = (court?: ICourt | null) => {
         if (court) {
             setCourtToEdit(court);
         } else {

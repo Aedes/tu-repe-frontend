@@ -3,6 +3,7 @@ import Button from "../../../../common/Button/Button";
 import { PlusIcon, CameraIcon, PencilIcon, CameraOffIcon, CopyIcon } from "../../../../../assets/Icons";
 import { useAdminActions } from "../../../../../hooks/useAdminActions";
 import { toast } from "sonner";
+import type { ICourt } from "../../../../../types";
 
 type PublishTarget = { cameraPath: string; streamKey: string }
 
@@ -11,7 +12,6 @@ const CourtsAndData = () => {
     const {
         courts,
         isClubDataChanged,
-        courtToEdit,
         editedClubData,
         selectedClub,
         setEditedClubData,
@@ -29,7 +29,7 @@ const CourtsAndData = () => {
 
     const [publishTargets, setPublishTargets] = useState<Record<string, PublishTarget>>({})
 
-    const handleOpenCourtForm = (court?: typeof courtToEdit) => {
+    const handleOpenCourtForm = (court?: ICourt | null) => {
         if (court) {
             setCourtToEdit(court);
         } else {

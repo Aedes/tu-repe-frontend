@@ -47,8 +47,13 @@ const UserDetails = () => {
 
     const handleAssignOwner = async (clubId: string) => {
         setBarClubsOpen(false)
+        const userId = userSelected?.id
+        if (!userId) {
+            toast.error("No se pudo asignar el dueño")
+            return
+        }
         const response = await fetchDataAssignOwner(`${BACKEND_API_URL}/users/cu`, {
-            userId: userSelected?.id,
+            userId,
             clubId
         })
 
@@ -57,22 +62,27 @@ const UserDetails = () => {
             return
         }
 
-        addClubTouser(response.clubAssigned, userSelected?.id!)
+        addClubTouser(response.clubAssigned, userId)
         toast.success("Dueño asignado con éxito.")
     }
 
     const handleUnassignOwner = async (clubId: string) => {
+        const userId = userSelected?.id
+        if (!userId) {
+            toast.error("No se pudo quitar el dueño")
+            return
+        }
         const response = await fetchDataUnassignOwner(`${BACKEND_API_URL}/users/cu`, {
-            userId: userSelected?.id,
+            userId,
             clubId
         })
 
-        if (!response) {
+        if (!response?.clubUnassigned.id) {
             toast.error(userFacingError(unassignOwnerError.current, "No se pudo quitar el dueño"))
             return
         }
 
-        removeClubFromUser(response.clubUnassigned.id!, userSelected?.id!)
+        removeClubFromUser(response.clubUnassigned.id, userId)
         toast.success("Dueño desasignado con éxito.")
     }
 

@@ -6,6 +6,7 @@ import { BACKEND_API_URL } from '../config';
 import type { ClubWithCourts, ICourt, IUser, Theme, UserWithClubs } from '../types';
 import { toClubWriteDto } from '../dto/clubDto';
 import { userFacingError } from '../api/errorMessage';
+import type { DataForm } from './useFormData';
 
 export const useAdminActions = () => {
     const {
@@ -211,7 +212,7 @@ export const useAdminActions = () => {
         fetchUsersAndClubs();
     }, []);
 
-    const handleCreateClub = async (data: { [key: string]: any }) => {
+    const handleCreateClub = async (data: DataForm) => {
         const newClub = await fetchDataPostClub(`${BACKEND_API_URL}/clubs`, data);
         if (newClub) {
             addClub(newClub);
@@ -350,7 +351,7 @@ export const useAdminActions = () => {
         return true;
     };
 
-    const handleCreateUser = async (data: { [key: string]: any }) => {
+    const handleCreateUser = async (data: DataForm) => {
         const response = await fetchDataPostUser(`${BACKEND_API_URL}/users`, data)
         if (!response) {
             toast.error(userFacingError(createUserError.current, "No se pudo crear el usuario"));

@@ -12,6 +12,7 @@ import ClubDetails from "./ClubDetails/ClubDetails";
 import CourtsForm from "./CourtsForm/CourtsForm";
 import { useAdminStore } from "../../../stores/adminStore";
 import UserDetails from "./UserDetails/UserDetails";
+import type { DataForm } from "../../../hooks/useFormData";
 
 const AdminInterface = () => {
     const {
@@ -54,7 +55,7 @@ const AdminInterface = () => {
         setIsOpenClubDetails(true);
     };
 
-    const handleCreateClubAndClose = async (data: { [key: string]: any }) => {
+    const handleCreateClubAndClose = async (data: DataForm) => {
         const success = await handleCreateClub(data);
         if (success) {
             setIsOpenForm(false);
@@ -77,7 +78,7 @@ const AdminInterface = () => {
         }
     };
 
-    const handleCreateUserAndClose = async (data: { [key: string]: any }) => {
+    const handleCreateUserAndClose = async (data: DataForm) => {
         const success = await handleCreateUser(data);
         if (success) {
             setIsOpenUserForm(false);

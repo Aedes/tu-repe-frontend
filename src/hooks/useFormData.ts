@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-interface DataForm {
+export interface DataForm {
     [key: string]: string | number;
 }
 

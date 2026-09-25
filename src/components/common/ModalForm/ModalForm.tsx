@@ -1,5 +1,5 @@
 import "./ModalForm.css"
-import { useFormData } from "../../../hooks/useFormData";
+import { useFormData, type DataForm } from "../../../hooks/useFormData";
 import Modal from "../Modal/Modal";
 import Button from "../Button/Button";
 
@@ -13,10 +13,8 @@ interface Props {
         required?: boolean;
     }>
     title: string
-    initialData: { [key: string]: any }
-    onSubmitForm: (data: {
-        [key: string]: any
-    }) => void;
+    initialData: DataForm
+    onSubmitForm: (data: DataForm) => void;
     onClose: () => void
     disabledButtons?: boolean
     subtitle?: string

@@ -1,5 +1,17 @@
 import { create } from 'zustand';
-import type { ClubWithCourts, IClub, ICourt, IUser, UserWithClubs } from '../types';
+import type { ClubWithCourts, IClub, ICourt, IUser, Theme, UserWithClubs } from '../types';
+
+const withoutTheme = <T extends { theme?: Theme }>(club: T) => {
+    const copy = { ...club }
+    delete copy.theme
+    return copy
+}
+
+const withoutClubs = <T extends { clubs?: IClub[] }>(user: T) => {
+    const copy = { ...user }
+    delete copy.clubs
+    return copy
+}
 
 interface AdminState {
     clubs: ClubWithCourts[];
@@ -324,12 +336,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     isClubDataChanged: () => {
         const state = get();
         if (!state.selectedClub || !state.editedClubData) return false;
-        const omitTheme = (club: any) => {
-            if (!club) return club;
-            const { theme, ...rest } = club;
-            return rest;
-        };
-        return JSON.stringify(omitTheme(state.selectedClub)) !== JSON.stringify(omitTheme(state.editedClubData));
+        return JSON.stringify(withoutTheme(state.selectedClub)) !== JSON.stringify(withoutTheme(state.editedClubData));
     },
     resetSelectedClub: () => set({
         selectedClub: null,
@@ -339,12 +346,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     isUserDataChanged: () => {
         const state = get();
         if (!state.userSelected || !state.editedUserData) return false;
-        const omitClubs = (user: any) => {
-            if (!user) return user;
-            const { clubs, ...rest } = user;
-            return rest;
-        };
-        return JSON.stringify(omitClubs(state.userSelected)) !== JSON.stringify(omitClubs(state.editedUserData));
+        return JSON.stringify(withoutClubs(state.userSelected)) !== JSON.stringify(withoutClubs(state.editedUserData));
     },
     resetSelectedUser: () => set({
         userSelected: null,
