@@ -3,6 +3,7 @@ import { CameraIcon, PencilIcon, CopyIcon } from "../../../../../assets/Icons";
 import { useUserActions } from "../../../../../hooks/useUserActions";
 import Button from "../../../../common/Button/Button";
 import type { ICourt } from "../../../../../types";
+import { PUBLIC_SITE_URL } from "../../../../../config";
 
 const CourtsAndData = () => {
 
@@ -37,7 +38,7 @@ const CourtsAndData = () => {
     };
 
     const copyToClipboard = () => {
-        navigator.clipboard.writeText(`https://turepe.aedestec.com/c/${editedClubData?.urlId}`);
+        navigator.clipboard.writeText(`${PUBLIC_SITE_URL}/c/${editedClubData?.urlId}`);
         toast.success("¡Link copiado!")
     }
 
@@ -92,7 +93,7 @@ const CourtsAndData = () => {
                 <div className="divInputClubInfo urlId">
                     <label>Link para jugadores:</label>
                     <div className="url">
-                        <label>turepe.aedestec.com/c/</label>
+                        <label>{PUBLIC_SITE_URL.replace(/^https?:\/\//, "")}/c/</label>
                         <input
                             className="inputUrl"
                             type="text"

@@ -4,6 +4,7 @@ import { PlusIcon, CameraIcon, PencilIcon, CameraOffIcon, CopyIcon } from "../..
 import { useAdminActions } from "../../../../../hooks/useAdminActions";
 import { toast } from "sonner";
 import type { ICourt } from "../../../../../types";
+import { PUBLIC_SITE_URL, RTMP_PUBLISH_HOST } from "../../../../../config";
 
 type PublishTarget = { cameraPath: string; streamKey: string }
 
@@ -52,7 +53,7 @@ const CourtsAndData = () => {
     };
 
     const copyToClipboard = () => {
-        navigator.clipboard.writeText(`https://turepe.aedestec.com/c/${editedClubData?.urlId}`);
+        navigator.clipboard.writeText(`${PUBLIC_SITE_URL}/c/${editedClubData?.urlId}`);
         toast.success("¡Link copiado!")
     }
 
@@ -64,9 +65,9 @@ const CourtsAndData = () => {
         const target = await handleRevealPublishTarget(courtId)
         if (!target) return
         rememberPublishTarget(courtId, target)
-        const url = `rtmp://IP_DE_TU_MAC:1935/${target.cameraPath}`
+        const url = `rtmp://${RTMP_PUBLISH_HOST}/${target.cameraPath}`
         await navigator.clipboard.writeText(url)
-        toast.success("URL RTMP copiada. Reemplazá IP_DE_TU_MAC por la IP de esta computadora.", { duration: 8000 })
+        toast.success("URL RTMP copiada.", { duration: 5000 })
     }
 
     const handleRotateAndShow = async (courtId: string) => {
@@ -181,7 +182,7 @@ const CourtsAndData = () => {
                 <div className="divInputClubInfo urlId">
                     <label>Link para jugadores:</label>
                     <div className="url">
-                        <label>turepe.aedestec.com/c/</label>
+                        <label>{PUBLIC_SITE_URL.replace(/^https?:\/\//, "")}/c/</label>
                         <input
                             className="inputUrl"
                             type="text"
